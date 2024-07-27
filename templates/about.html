@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block title %}About{% endblock %}
+
+{% block main %}
+
+<section class="about shadow-lg" id="about">
+    <div class="heading text-center mb-5">
+        <h1>About Us</h1>
+    </div>
+    <div class="container">
+        <div class="hero-content shadow-lg">
+            <h2>Lorem ipsum dolor sit.</h2>
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Odit consequuntur ad amet eos autem accusamus!
+            </p>
+            <a class="btn btn-primary" href="#contact">Contact Us</a>
+        </div>
+        <div class="hero-image shadow-lg"><img src="../static/photos/about.jpg" alt=""></div>
+    </div>
+</section>
+
+<section id="contact" class="shadow-lg contact">
+    <div class="heading text-center mb-5">
+        <h1>Contact Us</h1>
+    </div>
+    <form class="container cnt-container d-flex w-100">
+        <div class="row w-100 ">
+            <div class="col-6  info-col">
+                <div class="form-group my-4 text-center">
+                    <label for="cnt-name" class="my-1">Full Name</label>
+                    <input type="text" class="text-center form-control" id="cnt-name" placeholder="Full Name">
+                </div>
+                <div class="form-group mb-4 text-center">
+                    <label for="cnt-email" class="my-1">Email address</label>
+                    <input type="cnt-email" pattern="[^ @]*@[^ @]*" required class="text-center form-control" id="email"
+                        aria-describedby="emailHelp" placeholder="Enter email">
+                </div>
+            </div>
+            <div class="col-6 message-col py-2">
+                <div class="form-group text-center">
+                    <h5 mt-1>Type your message here.</h5>
+                    <textarea name="message" class="form-control mt-4" rows="5" id="message" required></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row w-100 d-block text-center">
+            <div class="col submit-col">
+                <p class="cnt-error d-none"></p>
+                <button type="submit" class="btn btn-outline-primary">Send</button>
+            </div>
+        </div>
+    </form>
+</section>
+
+{% endblock %}

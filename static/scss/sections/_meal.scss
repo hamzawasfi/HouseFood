@@ -1,0 +1,19 @@
+.meal {
+    margin-top: 6rem;
+
+    .card{
+        max-width: 31rem;
+    }
+
+    .amount{
+        width: 4rem;
+    }
+}
+
+.add-meal{
+    margin-top: 5rem;
+    &-input{
+        max-width: 30rem;
+        font-weight: bold;
+    }
+}

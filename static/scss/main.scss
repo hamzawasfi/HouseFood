@@ -1,0 +1,24 @@
+@use 'custom' as *;
+
+//IMPORT COMPONENTS
+@use './components/animations' as *;
+@use './components/mixins' as *;
+@use './components/typography' as *;
+
+//IMPORT SECTIONS
+@use './sections/header' as *;
+@use './sections/footer' as *;
+@use './sections/home' as *;
+@use './sections/menu' as *;
+@use './sections/login' as *;
+@use './sections/about' as *;
+@use './sections/meal' as *;
+@use './sections/cart' as *;
+@use './sections/profile' as *;
+
+
+
+//IMPORTINT EXTERNAL LIBRARIES
+@import '../packages/node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss';
+
+

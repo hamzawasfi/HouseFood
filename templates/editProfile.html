@@ -1,0 +1,58 @@
+{% extends "profile.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block side %}
+
+<aside class="profile-sidebar">
+    <form action="">
+        <div class="d-flex">
+            <button class="profile-toggle-btn" type="button">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="profile-sidebar-logo ms-3 mt-2">
+                <a href="#"><img class="shadow-lg" src="../static/photos/chef1.jpg" alt="profile photo"></a>
+            </div>
+        </div>
+        <input class="i-hide form-control edit-input my-3" type="file" id="formFile">
+        <ul class="profile-sidebar-nav">
+            <li class="profile-sidebar-item">
+                <div class="profile-sidebar-text">
+                    <div class="i-hide form-group">
+                        <input type="text" class="form-control edit-input" id="edit-name"
+                            placeholder="Enter Your Name">
+                    </div>
+                </div>
+            </li>
+            <li class="profile-sidebar-item">
+                <div class="profile-sidebar-text">
+                    <div class="i-hide form-group">
+                        <input type="text" class="form-control edit-input" id="edit-description"
+                            placeholder="Enter a short description">
+                    </div>
+                </div>
+            </li>
+            <li class="profile-sidebar-item">
+                <div class="profile-sidebar-text">
+                    <div class="i-hide form-group">
+                        <input type="text" class="form-control edit-input" id="edit-location"
+                            placeholder="Enter your location">
+                    </div>
+                </div>
+            </li>
+            <li class="profile-sidebar-item">
+                <div class="profile-sidebar-text">
+                    <div class="i-hide form-group">
+                        <input type="email" class="form-control edit-input" id="edit-email"
+                            placeholder="Enter your Email">
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="edit-sidebar-footer mx-auto mb-2">
+            <button type="submit" class="btn btn-primary mx-auto d-block">Save Profile</button>
+        </div>
+    </form>
+</aside>
+
+{% endblock %}

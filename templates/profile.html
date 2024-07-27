@@ -1,0 +1,354 @@
+<div class="profile-disp">
+    {% extends "layout.html" %}
+</div>
+
+{% block title %}Profile{% endblock %}
+
+{% block main %}
+
+<section class="profile" id="profile">
+    <div class="wrapper">
+        {% block side %}
+        <aside class="profile-sidebar">
+            <div class="d-flex">
+                <button class="profile-toggle-btn" type="button">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="profile-sidebar-logo ms-3 mt-2">
+                    <a href="#"><img class="shadow-lg" src="../static/photos/chef1.jpg" alt="profile photo"></a>
+                </div>
+            </div>
+            <ul class="profile-sidebar-nav">
+                <li class="profile-sidebar-item">
+                    <div class="profile-sidebar-text">
+                        <h6>Name</h6>
+                    </div>
+                </li>
+                <li class="profile-sidebar-item">
+                    <div class="profile-sidebar-text">
+                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Hic nihil dolore impedit, commodi
+                            fuga illo?</p>
+                    </div>
+                </li>
+                <li class="profile-sidebar-item">
+                    <div class="profile-sidebar-text d-flex">
+                        <i class="fa-solid fa-location-dot me-3"></i>
+                        <h6>Ismailia, Egypt</h6>
+                    </div>
+                </li>
+                <li class="profile-sidebar-item">
+                    <a href="#reviews" class="profile-sidebar-link">
+                        <div class="ratings">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="i-hide fa-solid fa-star"></i>
+                            <i class="i-hide fa-solid fa-star"></i>
+                            <i class="i-hide fa-solid fa-star"></i>
+                            <i class="i-hide fa-solid fa-star"></i>
+                            <p> 12 reviews</p>
+                        </div>
+                    </a>
+                </li>
+                <li class="profile-sidebar-item">
+                    <a href="/edit" class="profile-sidebar-link">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <span>Edit profile</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="profile-sidebar-footer">
+                <a href="" class="profile-sidebar-link">
+                    <i class="fas fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+        {% endblock %}
+
+        <!--MAIN CONTENT-->
+        <div class="profile-main">
+            <section class="menu shadow-lg pt-3" id="profile-menu">
+                <div class="title text-center">
+                    <h2>Offered Dishes</h2>
+                    <p>Lorem ipsum dolor sit amet.</p>
+                    <button class="btn btn-primary" type="submit" href="/addMeal"><i
+                            class="fa-solid fa-plus"></i></button>
+                </div>
+                <div class="container form-container">
+                    <form class="form my-3 search-form d-flex">
+                        <input class="form-control mr-2 text-center search-for" type="search" placeholder="Search"
+                            aria-label="Search">
+                        <button class="btn btn-outline-success btn-search my-2" type="submit">Search</button>
+                    </form>
+                </div>
+                <div id="menu-carousel" class="carousel" data-ride="carousel" data-interval="false">
+                    <div class="carousel-inner">
+                        <div class="carousel-item menu-item meal-item">
+                            <div class="card  shadow-lg">
+                                <div class="img-wrapper"><img src="../static/photos/meal2.jpg" class="card-img-top"
+                                        alt="Card image cap"></div>
+                                <div class="card-body">
+                                    <h5 class="card-title">French fries without meat</h5>
+                                    <p class="card-text">some quick information about the dish</p>
+                                    <h6>Price</h6>
+                                    <p class="card-text">100$</p>
+                                    <div class="ratings">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <p> 12 reviews</p>
+                                    </div>
+                                    <div class="other-details">
+                                        <a class="btn nav-link text-start" href="">shahd mansy<i
+                                                class="fa-solid fa-arrow-right"></i></a>
+                                    </div>
+                                    <a href="#" class="btn btn-outline-primary">More Details</a>
+                                    <a href="#" class="btn btn-primary">Order Now!</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item menu-item meal-item">
+                            <div class="card shadow-lg">
+                                <div class="img-wrapper"><img src="../static/photos/meal2.jpg" class="card-img-top"
+                                        alt="Card image cap"></div>
+                                <div class="card-body">
+                                    <h5 class="card-title">meat with sauce</h5>
+                                    <p class="card-text">some quick information about the dish</p>
+                                    <div class="ratings">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <p> 12 reviews</p>
+                                    </div>
+                                    <div class="other-details">
+                                        <a class="btn nav-link text-start" href="">the name of the chef <i
+                                                class="fa-solid fa-arrow-right"></i></a>
+                                    </div>
+                                    <a href="#" class="btn btn-outline-primary">More Details</a>
+                                    <a href="#" class="btn btn-primary">Order Now!</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item menu-item meal-item">
+                            <div class="card shadow-lg">
+                                <div class="img-wrapper"><img src="../static/photos/meal2.jpg" class="card-img-top"
+                                        alt="Card image cap"></div>
+                                <div class="card-body">
+                                    <h5 class="card-title">chicken sauce</h5>
+                                    <p class="card-text">some quick information about the dish</p>
+                                    <div class="ratings">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <p> 12 reviews</p>
+                                    </div>
+                                    <div class="other-details">
+                                        <a class="btn nav-link text-start" href="">the name of the chef <i
+                                                class="fa-solid fa-arrow-right"></i></a>
+                                    </div>
+                                    <a href="#" class="btn btn-outline-primary">More Details</a>
+                                    <a href="#" class="btn btn-primary">Order Now!</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item menu-item meal-item">
+                            <div class="card shadow-lg">
+                                <div class="img-wrapper"><img src="../static/photos/meal1.jpg" class="card-img-top"
+                                        alt="Card image cap"></div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Sweat potato salad</h5>
+                                    <p class="card-text">Some quick example text to build on the card title and make up
+                                        the bulk
+                                        of the card's content.</p>
+                                    <div class="ratings">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <p> 12 reviews</p>
+                                    </div>
+                                    <div class="other-details">
+                                        <a class="btn nav-link text-start" href="">rahma<i
+                                                class="fa-solid fa-arrow-right"></i></a>
+                                    </div>
+                                    <a href="#" class="btn btn-outline-primary">More Details</a>
+                                    <a href="#" class="btn btn-primary">Order Now!</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item menu-item meal-item">
+                            <div class="card shadow-lg">
+                                <div class="img-wrapper"><img src="../static/photos/meal4.jpg" class="card-img-top"
+                                        alt="Card image cap"></div>
+                                <div class="card-body">
+                                    <h5 class="card-title">mashed carrots</h5>
+                                    <p class="card-text">Some quick example text to build on the card title and make up
+                                        the bulk
+                                        of the card's content.</p>
+                                    <div class="ratings">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <p> 12 reviews</p>
+                                    </div>
+                                    <div class="other-details">
+                                        <a class="btn nav-link text-start" href="">araby <i
+                                                class="fa-solid fa-arrow-right"></i></a>
+                                    </div>
+                                    <a href="#" class="btn btn-outline-primary">More Details</a>
+                                    <a href="#" class="btn btn-primary">Order Now!</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#menu-prev" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" id="prev-menu" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#menu-next" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" id="next-menu" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </section>
+
+            <section class="menu shadow-lg pt-3" id="reviews">
+                <div class="title text-center">
+                    <div class="title text-center">
+                        <h2>Customers Reviews</h2>
+                        <p>Lorem ipsum dolor sit amet.</p>
+                        <button class="btn btn-primary mb-3" type="submit" href="/addMeal"><i
+                                class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+                <div id="menu-carousel" class="carousel" data-ride="carousel" data-interval="false">
+                    <div class="carousel-inner">
+                        <div class="carousel-item card bg-light mb-3" style="max-width: 18rem;">
+                            <div class="card-header">Name</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Name of the meal</h5>
+                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
+                                    aspernatur accusantium. Nisi, officiis sunt. Qui.</p>
+                                <div class="ratings">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item card bg-light mb-3" style="max-width: 18rem;">
+                            <div class="card-header">Name</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Name of the meal</h5>
+                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
+                                    aspernatur accusantium. Nisi, officiis sunt. Qui.</p>
+                                <div class="ratings">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item card bg-light mb-3" style="max-width: 18rem;">
+                            <div class="card-header">Name</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Name of the meal</h5>
+                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
+                                    aspernatur accusantium. Nisi, officiis sunt. Qui.</p>
+                                <div class="ratings">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item card bg-light mb-3" style="max-width: 18rem;">
+                            <div class="card-header">Name</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Name of the meal</h5>
+                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
+                                    aspernatur accusantium. Nisi, officiis sunt. Qui.</p>
+                                <div class="ratings">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item card bg-light mb-3" style="max-width: 18rem;">
+                            <div class="card-header">Name</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Name of the meal</h5>
+                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
+                                    aspernatur accusantium. Nisi, officiis sunt. Qui.</p>
+                                <div class="ratings">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item card bg-light mb-3" style="max-width: 18rem;">
+                            <div class="card-header">Name</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Name of the meal</h5>
+                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
+                                    aspernatur accusantium. Nisi, officiis sunt. Qui.</p>
+                                <div class="ratings">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item card bg-light mb-3" style="max-width: 18rem;">
+                            <div class="card-header">Name</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Name of the meal</h5>
+                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
+                                    aspernatur accusantium. Nisi, officiis sunt. Qui.</p>
+                                <div class="ratings">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#menu-prev" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" id="prev-review" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#menu-next" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" id="next-reviews" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

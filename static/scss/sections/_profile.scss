@@ -1,0 +1,184 @@
+@use '../custom' as *;
+
+.profile-disp {
+    .header:not(.expand) {
+        padding-left: 4.5rem;
+    }
+
+    .footer:not(.expand) {
+        padding-left: 4.5rem;
+        margin-right: 0;
+    }
+
+    .header, .footer{
+        padding-left: 17.5rem;
+    }
+
+}
+
+.profile {
+    min-height: 25vh;
+    margin-top: 0;
+
+    .wrapper {
+        display: flex;
+
+        .profile-sidebar {
+            position: fixed;
+            padding-top: 4.6rem;
+            width: 4.5rem;
+            min-width: 4.5rem;
+            z-index: 1000;
+            background-color: $gray-800;
+            display: flex;
+            flex-direction: column;
+            transition: 0.25s ease-in-out;
+            height: 100vh;
+
+            .profile-toggle-btn {
+                background: transparent;
+                padding: 2rem 1.8rem;
+                border: 0;
+
+                i {
+                    font-size: 1.5rem;
+                    color: $white;
+                }
+            }
+
+            &-logo {
+                margin: auto 0;
+
+                img {
+                    width: 10rem;
+                    height: auto;
+                    border-radius: 50%;
+                    border: 2px solid $white;
+                }
+
+                a {
+                    color: $white;
+                    font-size: 1.2rem;
+                    font-weight: 600;
+                }
+            }
+
+            &-nav {
+                padding: 1rem 0;
+                flex: 1 1 auto;
+
+                .profile-sidebar-item {
+                    margin-bottom: 0.5rem;
+                }
+            }
+
+            &-item {
+                position: relative;
+            }
+
+            &-text {
+                display: block;
+                padding: 0.6rem 1.6rem;
+                color: $white;
+                font-size: 0.9rem;
+                white-space: nowrap;
+                border-left: 3px solid transparent;
+            }
+
+            &-link {
+                display: block;
+                padding: 0.6rem 1.6rem;
+                color: $white;
+                font-size: 0.9rem;
+                white-space: nowrap;
+                border-left: 3px solid transparent;
+
+                &:hover {
+                    background: rgba($color: $white, $alpha: 0.075);
+                    border-left: 3px solid $primary;
+                }
+
+                i {
+                    font-size: 1.1rem;
+                    margin-right: 0.7rem;
+                }
+            }
+
+            &-text {
+                p {
+                    display: block;
+                    max-width: 100%;
+                    height: fit-content;
+                    white-space: initial;
+                }
+            }
+
+            &-footer {
+                margin-bottom: 1rem;
+            }
+
+            .edit-sidebar-footer{
+                max-width: 50%;
+            }
+        }
+
+        .profile-sidebar:not(.expand) {
+            .profile-sidebar-logo {
+                display: none;
+            }
+
+            .i-hide {
+                display: none;
+            }
+
+            .profile-sidebar-link span,
+            h6,
+            p,
+            .rating, 
+            .edit-sidebar-footer {
+                display: none;
+            }
+        }
+
+        .profile-sidebar.expand {
+            width: 17.5rem;
+            min-width: 17.5rem;
+        }
+
+        .profile-main{
+            width: 100%;
+            margin-left: 17.5rem;
+            margin-top: 3rem;
+            margin-right: 0;
+            overflow: hidden;
+            background: $gray-100;
+            transition: 0.35s ease-in-out;
+
+            h1 {
+                font-size: 1.5rem;
+                font-weight: 600;
+            }
+        }
+
+        .profile-main:not(.expand) {
+            width: 100%;
+            margin-left: 4.5rem;
+            margin-top: 3rem;
+            margin-right: 0;
+            overflow: hidden;
+            background: $gray-100;
+            transition: 0.35s ease-in-out;
+
+            h1 {
+                font-size: 1.5rem;
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+.edit-input{
+    height: auto;
+    max-width: 85%;
+    margin-inline: auto;
+}

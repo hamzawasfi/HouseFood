@@ -1,0 +1,31 @@
+@use '../custom' as *;
+
+.banner{
+    margin-top: 0;
+
+    .carousel-item {
+        transition-duration: 1.5s;
+      }
+
+    .transform {
+        transition: 5s ease-out 5s ease-in 1s ease-in-out;
+        opacity: 90%;
+    }
+
+    img{
+        object-fit: cover;
+        filter: brightness(0.6);
+    }
+}
+
+.menu{
+    .form-container{
+        max-width: 20rem;
+        .search-form{
+            flex-direction: column;
+        }
+        .btn-search{
+            margin: auto;
+        }
+    }
+}

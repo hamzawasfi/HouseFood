@@ -1,0 +1,67 @@
+<!--DYNAMIC CHEFS
+    {% for chefcard in chefCards %}
+    <div class="carousel-item menu-item chef-item">
+        <div class="card shadow-lg">
+            <div class="img-wrapper">
+                <img src="{{ chefCard.img }}" class="card-img-top" alt="Card image cap">
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ chefCard.title }}</h5>
+                <p class="card-text">{{ chefCard.intro }}</p>
+                <div class="ratings">
+                    {% for i in range({{ chefCard.rating }}) %}
+                    <i class="fa-solid fa-star"></i>
+                    {% endfor %}
+                    <p> {{ reviews }} reviews</p>
+                </div>
+                <div class="other-details">
+                    <a class="btn nav-link text-start" href="{{ chefCard.topMeal.link }}">{{
+                        chefCard.topMeal.name }}<i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+                <a href="/profile" class="btn btn-outline-primary">More Details</a>
+                <a href="
+                    {% if isLoggedin %}
+                        /request
+                    {% else %}
+                        /login
+                    {% endif %}" class="btn btn-primary">Send Request!</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    -->
+
+    <!--DYNAMIC MEALS\
+    {% for chefcard in chefCards %}
+     <div class="carousel-item menu-item meal-item">
+        <div class="card  shadow-lg">
+            <div class="img-wrapper"><img src="{{ mealCard.img }}" class="card-img-top"
+                    alt="Card image cap"></div>
+            <div class="card-body">
+                <h5 class="card-title">{{ mealCard.title }}</h5>
+                <p class="card-text">{{ mealCard.intro }}</p>\
+                <h6>Price</h6>
+                        <p class="card-text">${{ mealCard.price }}</p>
+                <div class="ratings">
+                    {% for i in range({{ mealCard.rating }}) %}
+                    <i class="fa-solid fa-star"></i>
+                    {% endfor %}
+                    <p> {{ reviews }} reviews</p>
+                </div>
+                </div>
+                <div class="other-details">
+                    <a class="btn nav-link text-start" href="{{ mealCard.chef.link }}">{{ mealCard.chef.name }}<i
+                            class="fa-solid fa-arrow-right"></i></a>
+                </div>
+                <a href="/meal" class="btn btn-outline-primary">More Details</a>
+                <a href="
+                    {% if isLoggedin %}
+                        /meal
+                    {% else %}
+                        /login
+                    {% endif %}" class="btn btn-primary">Order Now!</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    -->

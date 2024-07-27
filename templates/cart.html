@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block title %}Cart{% endblock %}
+
+{% block main %}
+
+<section class="cart align-items-center" id="cart">
+    <div class="cart-item d-flex align-items-center justify-content-between shadow-lg my-3">
+        <div>
+            <img class="card-img-top" src="../static/photos/meal4.jpg" alt="Card image cap">
+        </div>
+        <div class="card-body justify-content-between py-2 d-flex flex-column mx-3">
+            <h5>Meal title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                card's
+                content.</p>
+            <div class="input-group my-3 d-flex justify-content-center">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Amount: </span>
+                </div>
+                <input type="number" class="form-control amount" disabled id="exampleInputEmail1" placeholder="1">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Total: $</span>
+                </div>
+                <input type="text" disabled placeholder="100.00" class="form-control total"
+                    aria-label="Amount (to the nearest dollar)">
+            </div>
+        </div>
+    </div>
+    <div class="row text-center">
+        <form action="">
+            <div class="input-group my-1 px-auto justify-content-center">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Total: $</span>
+                </div>
+                <input type="text" disabled placeholder="100.00" class="form-control total"
+                    aria-label="Amount (to the nearest dollar)">
+            </div>
+            <button type="submit" class="btn btn-primary">Purchase Now!</button>
+        </form>
+    </div>
+</section>
+
+{% endblock %}
