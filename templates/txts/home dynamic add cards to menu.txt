@@ -10,21 +10,19 @@
                 <p class="card-text">{{ chefCard.intro }}</p>
                 <div class="ratings">
                     {% for i in range({{ chefCard.rating }}) %}
-                    <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
                     {% endfor %}
                     <p> {{ reviews }} reviews</p>
                 </div>
                 <div class="other-details">
-                    <a class="btn nav-link text-start" href="{{ chefCard.topMeal.link }}">{{
+                    <a class="btn nav-link text-start" onclick="meal({{ chefCard.topMealId }})">{{
                         chefCard.topMeal.name }}<i class="fa-solid fa-arrow-right"></i></a>
                 </div>
-                <a href="/profile" class="btn btn-outline-primary">More Details</a>
-                <a href="
-                    {% if isLoggedin %}
-                        /request
-                    {% else %}
-                        /login
-                    {% endif %}" class="btn btn-primary">Send Request!</a>
+                <form action="/profile" method="GET">
+                    <input type="hidden" value="{{ chefcard.chefId }}" name="profileId">
+                    <input type="submit" class="btn btn-outline-primary" value="More Details">
+                </form>
+                <a href="#" class="btn btn-primary">Send Request!</a>
             </div>
         </div>
     </div>
@@ -50,15 +48,17 @@
                 </div>
                 </div>
                 <div class="other-details">
-                    <a class="btn nav-link text-start" href="{{ mealCard.chef.link }}">{{ mealCard.chef.name }}<i
+                    <a class="btn nav-link text-start" onclick="meal({{ mealCard.chef }})">{{ mealCard.chef.name }}<i
                             class="fa-solid fa-arrow-right"></i></a>
                 </div>
-                <a href="/meal" class="btn btn-outline-primary">More Details</a>
-                <a href="
-                    {% if isLoggedin %}
-                        /meal
+                <form action="/profile" method="GET">
+                    <input type="hidden" value="{{ mealCard.mealId }}" name="profileId">
+                    <input type="submit" class="btn btn-outline-primary" value="More Details">
+                </form>
+                <a {% if isLoggedin %}
+                        onclick="meal({{ mealCard.mealId }})"
                     {% else %}
-                        /login
+                        onclick="login()"
                     {% endif %}" class="btn btn-primary">Order Now!</a>
             </div>
         </div>

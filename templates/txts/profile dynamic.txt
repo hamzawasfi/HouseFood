@@ -46,22 +46,24 @@
                     </a>
                 </li>
                 <li class="profile-sidebar-item">
-                    <a href="{% if isMe %}
-                                /editProfile
-                             {% else %}
-                                /SendRequest
-                             {% endif %}" class="profile-sidebar-link">
+                    <a  {% if isMe %}
+                            onclick="editProfile()"
+                        {% else %}
+                            onclick="sendRequest()"
+                        {% endif %}" class="profile-sidebar-link">
                         <i class="fa-solid fa-pen-to-square"></i>
                         <span>{% if isMe %}Edit{% else %}Send Request{% endif %}</span>
                     </a>
                 </li>
             </ul>
+            {% if isMe %}
             <div class="profile-sidebar-footer">
-                <a href="" class="profile-sidebar-link">
+                <a onclick="logout()" class="profile-sidebar-link">
                     <i class="fas fa-right-from-bracket"></i>
-                    <span>{% if isMe %}Logout{% else %}Login{% endif %}</span>
+                    <span>Logout</span>
                 </a>
             </div>
+            {% endif %}
         </aside>
         {% endblock %}
 
@@ -71,7 +73,7 @@
                 <div class="title text-center">
                     <h2>Offered Dishes</h2>
                     <p>Lorem ipsum dolor sit amet.</p>
-                    {% if isMe %}<button class="btn btn-primary" type="submit" href="/addMeal"><i
+                    {% if isMe %}<button class="btn btn-primary" type="submit" onclick="addMeal()"><i
                             class="fa-solid fa-plus"></i></button>{% endif %}
                 </div>
                 <div class="container form-container">
@@ -100,16 +102,12 @@
                     <p> {{ reviews }} reviews</p>
                 </div>
                 </div>
-                <div class="other-details">
-                    <a class="btn nav-link text-start" href="{{ mealCard.chef.link }}">{{ mealCard.chef.name }}<i
-                            class="fa-solid fa-arrow-right"></i></a>
-                </div>
-                <a href="/meal" class="btn btn-outline-primary">More Details</a>
-                <a href="
-                    {% if isLoggedin %}
-                        /meal
+
+                <a href="meal({mealCard.id})" class="btn btn-outline-primary">More Details</a>
+                <a {% if isLoggedin %}
+                        onclick="meal(user.id, mealCard.id)
                     {% else %}
-                        /login
+                        onclick="Login()"
                     {% endif %}" class="btn btn-primary">Order Now!</a>
             </div>
         </div>
@@ -132,7 +130,7 @@
                     <div class="title text-center">
                         <h2>Customers Reviews</h2>
                         <p>Lorem ipsum dolor sit amet.</p>
-                        {% if !isMe %}<button class="btn btn-primary mb-3" type="submit" href="/addMeal"><i
+                        {% if !isMe %}<button class="btn btn-primary mb-3" type="submit" onclick="addReview(user.Id)"><i
                                 class="fa-solid fa-plus"></i></button>{% endif %}
                     </div>
                 </div>

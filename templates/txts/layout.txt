@@ -29,7 +29,7 @@
                         <button class="btn nav-link ps-4" href="#"><i
                                 class=" fa-solid fa-bell text-white position-absolute icon"></i>
                             {% if isLoggedIn %}
-                                notification
+                                {{ user.notificationsLength }}
                             {% else %}
                                 0
                             {% endif %}
@@ -46,7 +46,7 @@
                             {% endif %}><i class=" fa-solid fa-cart-shopping text-white position-absolute icon"></i>
                             $
                             {% if isLoggedIn %}
-                                total
+                                {{ user.total }}
                             {% else %}
                                 0.00
                             {% endif %}
@@ -64,7 +64,7 @@
                                 onclick="login()" 
                             {% endif %}>
                                 {% if isLoggedIn %}
-                                    username
+                                    {{ user.username }}
                                 {% else %}
                                     Login
                                 {% endif %}
@@ -101,9 +101,9 @@
                                 onclick="login()" 
                             {% endif %}>
                                 {% if isLoggedIn %}
-                                    username
+                                    {{ isLoggedIn }}1
                                 {% else %}
-                                    Login
+                                    {{ isLoggedIn }}2
                                 {% endif %}
                             </a>
                             </li>
@@ -146,11 +146,11 @@
         }
 
         function home() {
-            window.location.href = "{{ url_for('home', userId=userId, isLoggedIn=isLoggedIn) }}"
+            window.location.href = "{{ url_for('home', userId='home', isLoggedIn='False') }}"
         }
 
         function cart(userId) {
-            window.location.href = "{{ url_for('cart', userId=userId) }}"
+            window.location.href = "{{ url_for('cart', userId='home') }}"
         }
 
         function about() {
@@ -158,23 +158,23 @@
         }
 
         function logout(userId) {
-            window.location.href = "{{ url_for('logout', userId=userId) }}"
+            window.location.href = "{{ url_for('logout', userId='home') }}"
         }
 
         function editProfile(userId){
-            window.location.href = "{{ url_for('editProfile', userId=userId) }}"
+            window.location.href = "{{ url_for('editProfile', userId='home')}}"
         }
 
         function addMeal(userId){
-            window.location.href = "{{ url_for('addMeal', userId=userId) }}"
+            window.location.href = "{{ url_for('addMeal', userId='home')}}"
         }
 
         function meal(userId, mealId){
-            window.location.href = "{{ url_for('addMeal', userId=userId, mealId='home') }}"
+            window.location.href = "{{ url_for('addMeal', userId='home', mealId='home')}}"
         }
 
         function profile(userId){
-            window.location.href = "{{ url_for('profile', userId=userId) }}"
+            window.location.href = "{{ url_for('profile', userId='home')}}"
         }
 
         function sendRequest(){

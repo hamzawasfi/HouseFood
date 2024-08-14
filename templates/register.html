@@ -2,26 +2,36 @@
 
 {% block title %}Register{% endblock %}
 
+{% block notification %}{% endblock %}
+{% block cart %}{% endblock %}
+
 {% block main %}
 
 <section id="register" class="register shadow-lg">
-    <form>
+    <form action="/register" method="POST">
         <div class="form-group">
             <label for="email" class="my-1">Email address</label>
-            <input type="email" pattern="[^ @]*@[^ @]*" required class="text-center form-control" id="email" aria-describedby="emailHelp"
+            <input type="email" name="registerEmail" value="" pattern="[^ @]*@[^ @]*" required class="text-center form-control" id="email" aria-describedby="emailHelp"
                 placeholder="Enter email">
         </div>
         <div class="form-group my-4">
             <label for="password" class="my-1">Password</label>
-            <input type="password" class="text-center form-control" id="password" placeholder="Password">
+            <input type="password" name="registerPassword" class="text-center form-control" id="password" placeholder="Password">
         </div>
         <div class="form-group my-4">
             <label for="confirm-password" class="my-1">Confirm Password</label>
-            <input type="password" class="text-center form-control" id="confirm-password" placeholder="Confirm Password">
+            <input type="password" name="registerConfirm" class="text-center form-control" id="confirm-password" placeholder="Confirm Password">
         </div>
         <p class="register-error"></p>
         <button type="submit" class="btn btn-primary">Submit</button>
-        <button type="button" href="/register" class="btn btn-outline-primary">Register</button>
+        <button type="button" onclick="login()" href="/login" class="btn btn-outline-primary">Login</button>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="mt-2 text-danger">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
     </form>
 </section>
 
