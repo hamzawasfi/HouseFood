@@ -45,6 +45,14 @@
                         </div>
                     </a>
                 </li>
+                {% if isMe %}
+                <li class="profile-sidebar-item">
+                    <div class="profile-sidebar-text d-flex">
+                        <i class="fa-solid fa-dollar-sign"></i>
+                        <h6>{{ profile.earned }}</h6>
+                    </div>
+                </li>
+                {% endif %}
                 <li class="profile-sidebar-item">
                     <a  {% if isMe %}
                             onclick="editProfile()"

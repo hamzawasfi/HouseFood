@@ -107,6 +107,11 @@
                                 {% endif %}
                             </a>
                             </li>
+                            {% if isLoggedIn %}
+                            <li>
+                                <a onclick="logout()">Logout</a>
+                            </li>
+                            {% endif %}
                         </ul>
                     </div>
                     <div class="col-md-5 offset-md-1 mb-3">
