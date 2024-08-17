@@ -15,24 +15,24 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="profile-sidebar-logo ms-3 mt-2">
-                    <a href="#"><img class="shadow-lg" src="{{ profile.image }}" alt="profile photo"></a>
+                    <a href="#"><img class="shadow-lg" src="{{ person.photo }}" alt="profile photo"></a>
                 </div>
             </div>
             <ul class="profile-sidebar-nav">
                 <li class="profile-sidebar-item">
                     <div class="profile-sidebar-text">
-                        <h6>{{ profile.name }}</h6>
+                        <h6>{{ person.name }}</h6>
                     </div>
                 </li>
                 <li class="profile-sidebar-item">
                     <div class="profile-sidebar-text">
-                        <p>{{ profile.intro }}</p>
+                        <p>{{ person.intro }}</p>
                     </div>
                 </li>
                 <li class="profile-sidebar-item">
                     <div class="profile-sidebar-text d-flex">
                         <i class="fa-solid fa-location-dot me-3"></i>
-                        <h6>{{ profile.location }}</h6>
+                        <h6>{{ person.location }}</h6>
                     </div>
                 </li>
                 <li class="profile-sidebar-item">
@@ -45,26 +45,26 @@
                         </div>
                     </a>
                 </li>
-                {% if isMe %}
+                {% if isMine %}
                 <li class="profile-sidebar-item">
                     <div class="profile-sidebar-text d-flex">
                         <i class="fa-solid fa-dollar-sign"></i>
-                        <h6>{{ profile.earned }}</h6>
+                        <h6>{{ person.earned }}</h6>
                     </div>
                 </li>
                 {% endif %}
                 <li class="profile-sidebar-item">
-                    <a  {% if isMe %}
+                    <a  {% if isMine %}
                             onclick="editProfile()"
                         {% else %}
                             onclick="sendRequest()"
                         {% endif %}" class="profile-sidebar-link">
                         <i class="fa-solid fa-pen-to-square"></i>
-                        <span>{% if isMe %}Edit{% else %}Send Request{% endif %}</span>
+                        <span>{% if isMine %}Edit{% else %}Send Request{% endif %}</span>
                     </a>
                 </li>
             </ul>
-            {% if isMe %}
+            {% if isMine %}
             <div class="profile-sidebar-footer">
                 <a onclick="logout()" class="profile-sidebar-link">
                     <i class="fas fa-right-from-bracket"></i>
@@ -81,7 +81,7 @@
                 <div class="title text-center">
                     <h2>Offered Dishes</h2>
                     <p>Lorem ipsum dolor sit amet.</p>
-                    {% if isMe %}<button class="btn btn-primary" type="submit" onclick="addMeal()"><i
+                    {% if isMine %}<button class="btn btn-primary" type="submit" onclick="addMeal()"><i
                             class="fa-solid fa-plus"></i></button>{% endif %}
                 </div>
                 <div class="container form-container">
@@ -138,7 +138,7 @@
                     <div class="title text-center">
                         <h2>Customers Reviews</h2>
                         <p>Lorem ipsum dolor sit amet.</p>
-                        {% if !isMe %}<button class="btn btn-primary mb-3" type="submit" onclick="addReview(user.Id)"><i
+                        {% if !isMine %}<button class="btn btn-primary mb-3" type="submit" onclick="addReview(user.Id)"><i
                                 class="fa-solid fa-plus"></i></button>{% endif %}
                     </div>
                 </div>

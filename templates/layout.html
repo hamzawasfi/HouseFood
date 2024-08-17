@@ -59,12 +59,12 @@
                     <li class="nav-item m-2">
                         <button class="btn btn-light" 
                             {% if isLoggedIn %}
-                                onclick="profile()"
+                                onclick="profile({{ userId }})"
                             {% else %}
                                 onclick="login()" 
                             {% endif %}>
                                 {% if isLoggedIn %}
-                                    username
+                                    {{ person.name }}
                                 {% else %}
                                     Login
                                 {% endif %}
@@ -89,19 +89,19 @@
                             <li class="nav-item mb-2"><a onclick="home()" class="nav-link p-0 text-muted">Home</a></li>
                             <li class="nav-item mb-2"><a 
                                 {% if isLoggedIn %} 
-                                    onclick="profile()" 
+                                    onclick="cart()" 
                                 {% else %}
                                     onclick="login()" 
                                 {% endif %} class="nav-link p-0 text-muted">Cart</a></li>
                             <li class="nav-item mb-2"><a onclick="about()" class="nav-link p-0 text-muted">About Us</a></li>
                             <li class="nav-item mb-2"><a 
                             {% if isLoggedIn %}
-                                onclick="profile()"
+                                onclick="profile({{ userId }})"
                             {% else %}
                                 onclick="login()" 
                             {% endif %}>
                                 {% if isLoggedIn %}
-                                    username
+                                    {{ person.name }}
                                 {% else %}
                                     Login
                                 {% endif %}
@@ -151,7 +151,7 @@
         }
 
         function home() {
-            window.location.href = "{{ url_for('home', userId=userId, isLoggedIn=isLoggedIn) }}"
+            window.location.href = "{{ url_for('home') }}"
         }
 
         function cart(userId) {
@@ -167,7 +167,7 @@
         }
 
         function editProfile(userId){
-            window.location.href = "{{ url_for('editProfile', userId=userId) }}"
+            window.location.href = "{{ url_for('editProfile', profileId=profileId) }}"
         }
 
         function addMeal(userId){
@@ -179,7 +179,7 @@
         }
 
         function profile(userId){
-            window.location.href = "{{ url_for('profile', userId=userId) }}"
+            window.location.href = "{{ url_for('profile', profileId=userId) }}"
         }
 
         function sendRequest(){

@@ -21,27 +21,28 @@
             <ul class="profile-sidebar-nav">
                 <li class="profile-sidebar-item">
                     <div class="profile-sidebar-text">
-                        <h6>Name</h6>
+                        <h6>{{ person.name }}</h6>
                     </div>
                 </li>
                 <li class="profile-sidebar-item">
                     <div class="profile-sidebar-text">
-                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Hic nihil dolore impedit, commodi
-                            fuga illo?</p>
+                        <p>{{ person.intro }}</p>
                     </div>
                 </li>
                 <li class="profile-sidebar-item">
                     <div class="profile-sidebar-text d-flex">
                         <i class="fa-solid fa-location-dot me-3"></i>
-                        <h6>Ismailia, Egypt</h6>
+                        <h6>{{ person.location }}</h6>
                     </div>
                 </li>
+                {% if isMine %}
                 <li class="profile-sidebar-item">
                     <div class="profile-sidebar-text d-flex">
                         <i class="fa-solid fa-dollar-sign me-3"></i>
-                        <h6>100.00</h6>
+                        <h6>{{ person.earned }}</h6>
                     </div>
                 </li>
+                {% endif %}
                 <li class="profile-sidebar-item">
                     <a href="#reviews" class="profile-sidebar-link">
                         <div class="ratings">
@@ -55,18 +56,24 @@
                     </a>
                 </li>
                 <li class="profile-sidebar-item">
-                    <a href="/edit" class="profile-sidebar-link">
+                    <a  {% if isMine %}
+                            onclick="editProfile({{ profileId }})"
+                        {% else %}
+                            onclick="sendRequest()"
+                        {% endif %} class="profile-sidebar-link">
                         <i class="fa-solid fa-pen-to-square"></i>
-                        <span>Edit profile</span>
+                        <span>{% if isMine %}Edit{% else %}Send Request{% endif %}</span>
                     </a>
                 </li>
             </ul>
+            {% if isMine %}
             <div class="profile-sidebar-footer">
-                <a href="" class="profile-sidebar-link">
+                <a onclick="logout()" class="profile-sidebar-link">
                     <i class="fas fa-right-from-bracket"></i>
                     <span>Logout</span>
                 </a>
             </div>
+            {% endif %}
         </aside>
         {% endblock %}
 
@@ -76,8 +83,8 @@
                 <div class="title text-center">
                     <h2>Offered Dishes</h2>
                     <p>Lorem ipsum dolor sit amet.</p>
-                    <button class="btn btn-primary" type="submit" href="/addMeal"><i
-                            class="fa-solid fa-plus"></i></button>
+                    {% if isMine %}<button class="btn btn-primary" type="submit" onclick="addMeal()"><i
+                        class="fa-solid fa-plus"></i></button>{% endif %}
                 </div>
                 <div class="container form-container">
                     <form class="form my-3 search-form d-flex">
@@ -110,7 +117,11 @@
                                                 class="fa-solid fa-arrow-right"></i></a>
                                     </div>
                                     <a href="#" class="btn btn-outline-primary">More Details</a>
-                                    <a href="#" class="btn btn-primary">Order Now!</a>
+                                    <a {% if isLoggedin %}
+                                            onclick="meal(user.id, mealCard.id)"
+                                        {% else %}
+                                            onclick="Login()"
+                                        {% endif %} class="btn btn-primary">Order Now!</a>
                                 </div>
                             </div>
                         </div>
@@ -231,8 +242,8 @@
                     <div class="title text-center">
                         <h2>Customers Reviews</h2>
                         <p>Lorem ipsum dolor sit amet.</p>
-                        <button class="btn btn-primary mb-3" type="submit" href="/addMeal"><i
-                                class="fa-solid fa-plus"></i></button>
+                        {% if not isMine %}<button class="btn btn-primary mb-3" type="submit" onclick="addReview(user.Id)"><i
+                            class="fa-solid fa-plus"></i></button>{% endif %}
                     </div>
                 </div>
                 <div id="menu-carousel" class="carousel" data-ride="carousel" data-interval="false">

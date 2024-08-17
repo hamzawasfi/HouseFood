@@ -40,15 +40,16 @@ class users(db.Model):
 
         
 class persons(db.Model):
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    userId = db.Column(db.Integer, db.ForeignKey(users.id), primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    userId = db.Column(db.Integer, db.ForeignKey(users.id), primary_key=True)
     name = db.Column(db.String(100), nullable=True)
     photo = db.Column(sqlalchemy_utils.types.url.URLType(), nullable=True)
     intro = db.Column(db.String(), nullable=True)
     location = db.Column(db.String(100), nullable=True)
     earned = db.Column(db.Integer, nullable=True)
     
-    def __init__(self, userId, name, photo, intro, location, earned):
+    def __init__(self, id, userId, name, photo, intro, location, earned):
+        self.id = id
         self.userId = userId
         self.name = name
         self.photo = photo
@@ -126,24 +127,8 @@ class cart(db.Model):
 
     
 #APP ROUTES
-@app.route("/")
-def start():
-    session["isLoggedIn"] = False
-    isLoggedIn = False
-    #check if logged in
-    if "user" in session:
-        user = session["user"]
-        session["isLoggedIn"] = True
-        isLoggedIn = True
-        userId = users.query.filter_by(email=user).first().id
-    if not isLoggedIn:
-        return redirect(url_for("home", userId="home", isLoggedIn=isLoggedIn))
-    else:
-        return redirect(url_for("home", userId=userId, isLoggedIn=isLoggedIn))
-
-
-@app.route("/<userId>/<isLoggedIn>", methods=['GET', 'POST'])
-def home(userId, isLoggedIn):
+@app.route("/", methods=['GET', 'POST'])
+def home():
     session["isLoggedIn"] = False
     isLoggedIn = False 
     #check if logged in
@@ -162,10 +147,12 @@ def home(userId, isLoggedIn):
     
         #send cards to frontend
         ###
+        
         if not isLoggedIn:
             return render_template("home.html", userId="home", isLoggedIn=isLoggedIn)
         else:
-            return render_template("home.html", userId=userId, isLoggedIn=isLoggedIn)
+            person = persons.query.filter_by(userId=userId).first() 
+            return render_template("home.html", userId=userId, isLoggedIn=isLoggedIn, person=person)
     
     else:
         chefId = request.form['chefId']
@@ -173,7 +160,7 @@ def home(userId, isLoggedIn):
         if chefId:
             return redirect(url_for("profile", chefId))
         elif mealId:
-            return redirect(url_for("profile", mealId))
+            return redirect(url_for("meal", mealId))
 
 
 @app.route("/register", methods=['POST', 'GET'])
@@ -215,7 +202,7 @@ def register():
             userId = users.query.filter_by(email=registerEmail).first().id
             
             #add to db persons
-            person = persons(userId=userId)
+            person = persons(userId, userId, "Name", "photo", "Brief about you", "Your location", 0)
             db.session.add(person)
             db.session.commit()
             
@@ -229,7 +216,7 @@ def register():
             isLoggedIn = True
             
             #render home page with input of user id and is logged in
-            return redirect(url_for("home", userId=userId, isLoggedIn=isLoggedIn))    
+            return redirect(url_for("home"))    
     else:
         session['isLoggedIn'] = False
         isLoggedIn = False
@@ -240,7 +227,7 @@ def register():
             #grab user id
             userId = users.query.filter_by(email=session['user']).first().id
             
-            return redirect(url_for("home", userId=userId, isLoggedIn=isLoggedIn))
+            return redirect(url_for("home"))
         return render_template("register.html")
     
     
@@ -284,7 +271,7 @@ def login():
         #get user Id
         userId = users.query.filter_by(email=loginEmail).first().id
         
-        return redirect(url_for("home", userId=userId, isLoggedIn=isLoggedIn))
+        return redirect(url_for("home"))
     else:
         session['isLoggedIn'] = False
         isLoggedIn = False
@@ -294,7 +281,7 @@ def login():
             
             #grab user id
             userId = users.query.filter_by(email=session['user']).first().id
-            return redirect(url_for("home", userId=userId, isLoggedIn=isLoggedIn))
+            return redirect(url_for("home"))
         return render_template("login.html")
   
     
@@ -327,8 +314,8 @@ def subscribe():
             
         #grab user id
         userId = users.query.filter_by(email=session['user']).first().id
-        return redirect(url_for("home", userId=userId, isLoggedIn=isLoggedIn))    
-    return redirect(url_for("home", userId="home", isLoggedIn=isLoggedIn))
+        return redirect(url_for("home"))    
+    return redirect(url_for("home"))
 
 
 @app.route("/about")
@@ -353,23 +340,51 @@ def cart():
     return render_template("cart.html")
 
 
-@app.route("/profile")
-def profile():
+@app.route("/profile/<profileId>")
+def profile(profileId):
+    session['isLoggedIn'] = False
+    isLoggedIn = False
     isMine = False
     if "user" in session:
         user = session["user"]
+        session['isLoggedIn'] = True
         isLoggedIn = True
         
-        if user == profileId:
-            isMine = True
+        userId = users.query.filter_by(email=session['user']).first().id
+        person = persons.query.filter_by(userId=userId).first() 
         
-    #redirect to login
-    return render_template("profile.html")
+        if int(userId) == int(profileId):
+            isMine = True
+            
+        return render_template("profile.html",  profileId=profileId, isLoggedIn=isLoggedIn, person=person, isMine=isMine)
+    else:
+        #redirect to login
+        return redirect(url_for("login"))
 
 
-@app.route("/editProfile")
-def editProfile():
-    return render_template("editProfile.html")
+@app.route("/editProfile/<profileId>", methods=['POST', 'GET'])
+def editProfile(profileId):
+    if request.method == 'GET':
+        session['isLoggedIn'] = False
+        
+        #check if logged in
+        if "user" in session:
+            session['isLoggedIn'] = True
+        
+            userId = users.query.filter_by(email=session['user']).first().id
+            
+            #check if my profile
+            if int(userId) == int(profileId):
+                isMine = True
+            else:
+                return redirect(url_for("profile", profileId=userId))            
+        else:
+            return redirect(url_for("login"))
+        
+        return render_template("editProfile.html")
+    else:
+        return render_template("editProfile.html")
+        
 
 
 @app.route("/meal")
