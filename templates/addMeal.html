@@ -5,11 +5,11 @@
 {% block main %}
 
 <section class="add-meal px-auto p-4 mb-4" id="add-meal">
-    <form action="">
+    <form action="/addMeal/{{ userId }}" method="POST" enctype="multipart/form-data">
         <div class="form-group text-center mb-3">
-            <label class="mb-1" for="add-meal-title">Title of the meal:</label>
-            <input type="text" class="mx-auto form-control text-center add-meal-input" id="add-meal-title"
-                placeholder="Enter a title">
+            <label class="mb-1" for="add-meal-title">Name of the meal:</label>
+            <input type="text" name="addMealName" class="mx-auto form-control text-center add-meal-input"
+                id="add-meal-title" placeholder="Enter the name">
         </div>
         <div class="d-flex">
             <div class="col-6 me-3">
@@ -17,18 +17,10 @@
                     <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                         <ol class="carousel-indicators">
                             <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
                         </ol>
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img class="d-block w-100" src="../static/photos/meal1.jpg" alt="First slide">
-                            </div>
-                            <div class="carousel-item">
-                                <img class="d-block w-100" src="../static/photos/meal2.jpg" alt="Second slide">
-                            </div>
-                            <div class="carousel-item">
-                                <img class="d-block w-100" src="../static/photos/meal3.jpg" alt="Third slide">
+                                <img class="d-block w-100" src="../static/photos/placeholder.jpg" alt="First slide">
                             </div>
                         </div>
                         <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button"
@@ -44,9 +36,7 @@
                     </div>
                     <div class="mb-3 mt-2 text-center">
                         <label for="formFile" class="form-label">Add pictures of the meal:</label>
-                        <input class="form-control" type="file" id="formFile">
-                        <input class="form-control my-1" type="file" id="formFile">
-                        <input class="form-control" type="file" id="formFile">
+                        <input name="addMealPhoto" class="form-control" type="file" id="formFile">
                     </div>
                 </div>
             </div>
@@ -55,21 +45,20 @@
                     <div class="card-body">
                         <div class="form-group mb-3">
                             <label class="mb-1" for="add-meal-description">Description of the meal</label>
-                            <input type="text" class="form-control add-meal-input" id="add-meal-description"
-                                placeholder="Enter a short description">
+                            <input type="text" name="addMealIntro" class="form-control add-meal-input"
+                                id="add-meal-description" placeholder="Enter a short description">
                         </div>
                         <h6 class="card-title mb-2">Ingridients:</h6>
                         <ul class="list-group mb-3">
-                            <li class="list-group-item">Cras justo odio</li>
-                            <li class="list-group-item">Dapibus ac facilisis in</li>
-                            <li class="list-group-item">Morbi leo risus</li>
-                            <li class="list-group-item">Porta ac consectetur ac</li>
-                            <li class="list-group-item">Vestibulum at eros</li>
+                            <li class="list-group-item"><input type="text" name="addMealIngredient"
+                                    class="form-control add-meal-input" id="add-meal-description"
+                                    placeholder="Enter an ingredient"></li>
+                            <li class="list-group-item"><button class="btn btn-primary"> + </button></li>
                         </ul>
                         <div class="form-group mb-3">
                             <label class="mb-1" for="add-meal-price">Price</label>
-                            <input type="number" class="form-control add-meal-input" id="add-meal-price"
-                                placeholder="0.00">
+                            <input name="addMealPrice" type="number" class="form-control add-meal-input"
+                                id="add-meal-price" placeholder="0.00">
                         </div>
                     </div>
                 </div>

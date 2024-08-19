@@ -171,11 +171,11 @@
         }
 
         function addMeal(userId){
-            window.location.href = "{{ url_for('addMeal', userId=userId) }}"
+            window.location.href = "{{ url_for('addMeal', userId=profileId) }}"
         }
 
         function meal(userId, mealId){
-            window.location.href = "{{ url_for('addMeal', userId=userId, mealId='home') }}"
+            window.location.href = "{{ url_for('meal', userId=userId, mealId='home') }}"
         }
 
         function profile(userId){

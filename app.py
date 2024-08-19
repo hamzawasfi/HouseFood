@@ -4,6 +4,8 @@ from flask import Flask, render_template, session, flash, request, redirect, url
 from datetime import timedelta
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 app.secret_key = "HouseFood"
@@ -15,10 +17,12 @@ app.config['MAIL_USERNAME'] = 'hamzawasfi58@gmail.com'
 app.config['MAIL_PASSWORD'] = 'qxfc xfiu ufcz uogi'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
+app.config['UPLOAD_FOLDER'] = 'static/photos'
 app.permanent_session_lifetime = timedelta(days=1)
 
 db = SQLAlchemy(app)
 mail = Mail(app)
+
 
 #DATABASE MODELS
 class subscribed(db.Model):
@@ -40,16 +44,15 @@ class users(db.Model):
 
         
 class persons(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    userId = db.Column(db.Integer, db.ForeignKey(users.id), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    userId = db.Column(db.Integer, db.ForeignKey(users.id))
     name = db.Column(db.String(100), nullable=True)
     photo = db.Column(sqlalchemy_utils.types.url.URLType(), nullable=True)
     intro = db.Column(db.String(), nullable=True)
     location = db.Column(db.String(100), nullable=True)
     earned = db.Column(db.Integer, nullable=True)
     
-    def __init__(self, id, userId, name, photo, intro, location, earned):
-        self.id = id
+    def __init__(self, userId, name, photo, intro, location, earned):
         self.userId = userId
         self.name = name
         self.photo = photo
@@ -124,8 +127,7 @@ class cart(db.Model):
         self.mealId = mealId
         self.personId = personId
         self.amount = amount
-
-    
+          
 #APP ROUTES
 @app.route("/", methods=['GET', 'POST'])
 def home():
@@ -202,7 +204,7 @@ def register():
             userId = users.query.filter_by(email=registerEmail).first().id
             
             #add to db persons
-            person = persons(userId, userId, "Name", "photo", "Brief about you", "Your location", 0)
+            person = persons(userId, "Name", "photo", "Brief about you", "Your location", 0)
             db.session.add(person)
             db.session.commit()
             
@@ -381,26 +383,111 @@ def editProfile(profileId):
         else:
             return redirect(url_for("login"))
         
-        return render_template("editProfile.html")
+        return render_template("editProfile.html", profileId=profileId)
     else:
-        return render_template("editProfile.html")
+        #grab inputs from form
+        editProfilePhoto = request.files['editProfilePhoto']
+        editProfileName = request.form['editProfileName']
+        editProfileIntro = request.form['editProfileIntro']
+        editProfileLocation = request.form['editProfileLocation']
+        editProfileEmail = request.form['editProfileEmail']
+        
+        #grab existing user and person
+        foundUser = users.query.filter_by(email=session['user']).first()
+        foundPerson = persons.query.filter_by(userId=foundUser.id).first()
+        
+        #assign one by one
+        if editProfilePhoto:
+            editProfilePhoto.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), app.config['UPLOAD_FOLDER'], secure_filename(editProfilePhoto.filename)))
+            foundPerson.photo = editProfilePhoto.filename
+        if editProfileName:
+            foundPerson.name = editProfileName
+        if editProfileIntro:
+            foundPerson.intro = editProfileIntro
+        if editProfileLocation:
+            foundPerson.location = editProfileLocation
+        if editProfileEmail:
+            foundUser.email = editProfileEmail
+            
+        #commit to db
+        db.session.commit() 
+        
+        return redirect(url_for("profile", profileId=profileId))
         
 
-
-@app.route("/meal")
-def meal():
+@app.route("/meal/<mealId>")
+def meal(mealId):
     if "user" in session:
         user = session["user"]
         isLoggedIn = True
     return render_template("meal.html")
         
         
-@app.route("/addMeal")
+@app.route("/addMeal/<userId>", methods=['POST', 'GET'])
 def addMeal(userId):
-    return render_template("addMeal.html")
+    if request.method == 'GET':
+        session['isLoggedIn'] = False
         
-    #redirect to login
-    return render_template("login.html")
+        #check if logged in
+        if "user" in session:
+            session['isLoggedIn'] = True
+        
+            foundUserId = users.query.filter_by(email=session['user']).first().id
+            
+            if int(userId) != int(foundUserId):
+                return redirect(url_for("profile", profileId=foundUserId))
+            
+            return render_template("addMeal.html", userId=foundUserId)
+        else:
+            return redirect(url_for("login"))
+    else:
+        #add a chef if does not exist
+        if not chefs.query.filter_by(personId=userId).first():
+            chef = chefs(userId)
+            db.session.add(chef)
+            db.session.commit()
+            
+        #get chef id
+        chefId = chefs.query.filter_by(personId=userId).first()
+        
+        #grab inputs from form
+        addMealName = request.files['addMealName']
+        addMealIntro = request.form['addMealIntro']
+        addMealPrice = request.form['addMealPrice']
+        
+        addMealPhotos = request.form['addMealPhoto']
+        addMealIngredients = request.form['addMealIngredients']
+        
+        #assign one by one
+        if not addMealName:
+            addMealName = "Meal Name"
+        if not addMealIntro:
+            addMealIntro = "Meal Description"
+        if not addMealPrice:
+            addMealPrice = 0
+            
+        #add to db 
+        meal = meals(chefId, addMealName, addMealIntro, addMealPrice)
+        db.session.add(meal)
+        db.session.commit()
+        
+        #get the added meal
+        addedMealId = meals.query.filter_by(chefId=chefId).order_by(id.desc()).first().id
+         
+        #add meal photos   
+        if addMealPhoto:
+            for addMealPhoto in addMealPhotos:
+                addMealPhoto.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), app.config['UPLOAD_FOLDER'], secure_filename(addMealPhoto.filename)))
+                addMealPhoto = addMealPhoto.filename
+        else:
+            addMealPhoto = "placeholder.jpg"
+        
+        #add meal ingredients 
+        if addMealIngredients:
+            addMealIngredients = "ingredients"
+        
+        return redirect(url_for("meal", mealId=addedMealId))      
+        
 
 if __name__ == "__main__":
     with app.app_context():

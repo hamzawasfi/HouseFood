@@ -5,22 +5,22 @@
 {% block side %}
 
 <aside class="profile-sidebar">
-    <form action="">
+    <form action="/editProfile/{{ profileId }}" method="POST" enctype="multipart/form-data">
         <div class="d-flex">
             <button class="profile-toggle-btn" type="button">
                 <i class="fas fa-bars"></i>
             </button>
             <div class="profile-sidebar-logo ms-3 mt-2">
-                <a href="#"><img class="shadow-lg" src="../static/photos/chef1.jpg" alt="profile photo"></a>
+                <a href="#"><img class="shadow-lg" src="../static/photos/placeholder.jpg" alt="profile photo"></a>
             </div>
         </div>
-        <input class="i-hide form-control edit-input my-3" type="file" id="formFile">
+        <input class="i-hide form-control edit-input my-3" name="editProfilePhoto" type="file" id="formFile">
         <ul class="profile-sidebar-nav">
             <li class="profile-sidebar-item">
                 <div class="profile-sidebar-text">
                     <div class="i-hide form-group">
                         <input type="text" class="form-control edit-input" id="edit-name"
-                            placeholder="Enter Your Name">
+                            placeholder="Enter Your Name" name="editProfileName">
                     </div>
                 </div>
             </li>
@@ -28,7 +28,7 @@
                 <div class="profile-sidebar-text">
                     <div class="i-hide form-group">
                         <input type="text" class="form-control edit-input" id="edit-description"
-                            placeholder="Enter a short description">
+                            placeholder="Enter a short description" name="editProfileIntro">
                     </div>
                 </div>
             </li>
@@ -36,7 +36,7 @@
                 <div class="profile-sidebar-text">
                     <div class="i-hide form-group">
                         <input type="text" class="form-control edit-input" id="edit-location"
-                            placeholder="Enter your location">
+                            placeholder="Enter your location" name="editProfileLocation">
                     </div>
                 </div>
             </li>
@@ -44,7 +44,7 @@
                 <div class="profile-sidebar-text">
                     <div class="i-hide form-group">
                         <input type="email" class="form-control edit-input" id="edit-email"
-                            placeholder="Enter your Email">
+                            placeholder="Enter your Email" pattern="[^ @]*@[^ @]*" name="editProfileEmail">
                     </div>
                 </div>
             </li>

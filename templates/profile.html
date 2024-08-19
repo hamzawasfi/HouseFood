@@ -15,7 +15,7 @@
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="profile-sidebar-logo ms-3 mt-2">
-                    <a href="#"><img class="shadow-lg" src="../static/photos/chef1.jpg" alt="profile photo"></a>
+                    <a href="#"><img class="shadow-lg" {% if not person.photo %} src="../static/photos/placeholder.jpg" {% else %} src="../static/photos/{{ person.photo }}" {% endif %} alt="profile photo"></a>
                 </div>
             </div>
             <ul class="profile-sidebar-nav">
@@ -83,7 +83,7 @@
                 <div class="title text-center">
                     <h2>Offered Dishes</h2>
                     <p>Lorem ipsum dolor sit amet.</p>
-                    {% if isMine %}<button class="btn btn-primary" type="submit" onclick="addMeal()"><i
+                    {% if isMine %}<button class="btn btn-primary" type="submit" onclick="addMeal({{ profileId }})"><i
                         class="fa-solid fa-plus"></i></button>{% endif %}
                 </div>
                 <div class="container form-container">
