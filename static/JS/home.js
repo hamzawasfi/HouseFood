@@ -87,19 +87,20 @@ const nextMouseDown = (e) => {
 };
 
 const prevMouseDown = (e) => {
-    int = setInterval(() => {if (e.target.getAttribute('id') == "prev-menu") {
-        if (menuScrollPosition > 0) {
-            menuScrollPosition -= 100;
-            $(e.target.parentNode.previousElementSibling).animate({ scrollLeft: menuScrollPosition }, 600);
+    int = setInterval(() => {
+        if (e.target.getAttribute('id') == "prev-menu") {
+            if (menuScrollPosition > 0) {
+                menuScrollPosition -= 100;
+                $(e.target.parentNode.previousElementSibling).animate({ scrollLeft: menuScrollPosition }, 600);
+            }
         }
-    }
-    else {
-        if (reviewScrollPosition > 0) {
-            reviewScrollPosition -= 100;
-            $(e.target.parentNode.previousElementSibling).animate({ scrollLeft: reviewScrollPosition }, 600);
+        else {
+            if (reviewScrollPosition > 0) {
+                reviewScrollPosition -= 100;
+                $(e.target.parentNode.previousElementSibling).animate({ scrollLeft: reviewScrollPosition }, 600);
+            }
         }
-    }
-}, 400);
+    }, 400);
 };
 
 $(".carousel-control-next").mousedown(nextMouseDown).mouseup(mouseUp);
@@ -136,7 +137,7 @@ for (const radio of menuRadios) {
 }
 
 //SEARCH
-try {
+if (document.querySelector('.search-form')) {
     document.querySelector('.search-form').addEventListener('submit', (event) => {
         event.preventDefault();
 
@@ -160,9 +161,8 @@ try {
         }
         menuWidth = cardsCount * allCards[0].clientWidth / 3;
     });
-} catch (error) {
-    console.log("error")
 }
+
 
 //Profile
 //Side bar
@@ -172,9 +172,30 @@ const main = document.querySelector(".profile-main");
 const profileHeader = document.querySelector(".header");
 const profileFooter = document.querySelector(".footer");
 
-btn.addEventListener('click', () => {
-    sidebar.classList.toggle("expand");
-    main.classList.toggle("expand");
-    profileHeader.classList.toggle("expand");
-    profileFooter.classList.toggle("expand");
-})
+if (btn) {
+    btn.addEventListener('click', () => {
+        sidebar.classList.toggle("expand");
+        main.classList.toggle("expand");
+        profileHeader.classList.toggle("expand");
+        profileFooter.classList.toggle("expand");
+    })
+}
+
+//adding ingredients to list
+if (document.getElementById("addMeal-ingredient-btn")) {
+    document.getElementById("addMeal-ingredient-btn").onclick = function () {
+        let ingridient = document.getElementById("addMeal-ingredient-txt").value;
+        document.getElementById("addMeal-ingredients").innerHTML += "<li>" + ingridient + "<li><hr>";
+        document.getElementById("addMealIngridientList").value += ingridient + ",";
+    }
+}
+
+//adding photos to list
+if (document.getElementById("addMeal-photo-btn")) {
+    document.getElementById("addMeal-photo-btn").onclick = function () {
+        let photo = document.getElementById("addMeal-addPhoto").value
+        let photoName = document.getElementById("addMeal-addPhoto").value.split("\\");
+        document.getElementById("addMeal-photos").innerHTML += "<li>" + photoName[photoName.length - 1] + "<li><hr>";
+        document.getElementById("addMealPhotoList").value += photo + ",";
+    }
+}

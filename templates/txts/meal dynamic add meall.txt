@@ -1,4 +1,4 @@
-<h2 class="card-title text-center mb-3">{{ card.title }}</h2>
+<h2 class="card-title text-center mb-3">{{ meal.name }}</h2>
 <div class="d-flex">
     <div class="col-6 me-3">
         <div class="card shadow-lg mx-auto">

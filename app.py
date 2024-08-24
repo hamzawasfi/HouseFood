@@ -4,6 +4,7 @@ from flask import Flask, render_template, session, flash, request, redirect, url
 from datetime import timedelta
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import desc
 from werkzeug.utils import secure_filename
 import os
 
@@ -26,7 +27,7 @@ mail = Mail(app)
 
 #DATABASE MODELS
 class subscribed(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(100))
     
     def __init__(self, email):
@@ -34,7 +35,7 @@ class subscribed(db.Model):
 
 
 class users(db.Model):
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String, nullable=False)
     
@@ -44,7 +45,7 @@ class users(db.Model):
 
         
 class persons(db.Model):
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     userId = db.Column(db.Integer, db.ForeignKey(users.id))
     name = db.Column(db.String(100), nullable=True)
     photo = db.Column(sqlalchemy_utils.types.url.URLType(), nullable=True)
@@ -62,16 +63,16 @@ class persons(db.Model):
         
         
 class chefs(db.Model):
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    personId = db.Column(db.Integer, db.ForeignKey(persons.id), primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    personId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
     
     def __init__(self, personId):
         self.personId = personId
         
         
 class meals(db.Model):
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    chefId = db.Column(db.Integer, db.ForeignKey(chefs.id), primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    chefId = db.Column(db.Integer, db.ForeignKey(chefs.id), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     intro = db.Column(db.String(), nullable=True)
     price = db.Column(db.Integer, nullable=False)
@@ -83,19 +84,19 @@ class meals(db.Model):
         self.price = price
     
 
-class mealPhotos(db.Model):
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    mealId = db.Column(db.Integer, db.ForeignKey(meals.id), primary_key=True, nullable=False)
-    photo = db.Column(sqlalchemy_utils.types.url.URLType(), nullable=True)
+class meal_photos(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    mealId = db.Column(db.Integer, db.ForeignKey(meals.id), nullable=False)
+    photo = db.Column(db.String(), nullable=True)
     
     def __init__(self, mealId, photo):
         self.mealId = mealId
         self.photo = photo
 
 
-class ingridients(db.Model):
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    mealId = db.Column(db.Integer, db.ForeignKey(meals.id), primary_key=True, nullable=False)
+class ings(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    mealId = db.Column(db.Integer, db.ForeignKey(meals.id), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     
     def __init__(self, mealId, name):
@@ -104,9 +105,9 @@ class ingridients(db.Model):
         
         
 class reviews(db.Model):
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    mealId = db.Column(db.Integer, db.ForeignKey(meals.id), primary_key=True, nullable=False)
-    personId = db.Column(db.Integer, db.ForeignKey(persons.id), primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    mealId = db.Column(db.Integer, db.ForeignKey(meals.id), nullable=False)
+    personId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
     text = db.Column(db.String(), nullable=False)
     review = db.Column(db.Integer, nullable=False)
     
@@ -118,15 +119,19 @@ class reviews(db.Model):
         
         
 class cart(db.Model):
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    mealId = db.Column(db.Integer, db.ForeignKey(meals.id), primary_key=True, nullable=False)
-    personId = db.Column(db.Integer, db.ForeignKey(persons.id), primary_key=True, nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    mealId = db.Column(db.Integer, db.ForeignKey(meals.id), nullable=False)
+    personId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
     amount = db.Column(db.Integer, nullable=False)
     
     def __init__(self, mealId, personId, amount):
         self.mealId = mealId
         self.personId = personId
         self.amount = amount
+        
+with app.app_context():
+    db.create_all()
+app.run(debug=True)
           
 #APP ROUTES
 @app.route("/", methods=['GET', 'POST'])
@@ -420,7 +425,29 @@ def meal(mealId):
     if "user" in session:
         user = session["user"]
         isLoggedIn = True
-    return render_template("meal.html")
+        session['isLoggedIn'] = True
+        
+        #get user id
+        userId = users.query.filter_by(email=user).first().id
+        
+        #get the found meal        
+        foundMeal = meals.query.filter_by(id=mealId).first()
+        
+        #get found meal photos
+        foundMealPhotos = meal_photos.query.filter_by(mealId=mealId).all()
+        
+        #get found meal ingridients
+        foundMealIngridients = ings.query.filter_by(mealId=mealId).all()
+        
+        #get the chef person id
+        foundChefPersonId = chefs.query.filter_by(id=foundMeal.chefId).first().personId
+        
+        #get person
+        foundPerson = persons.query.filter_by(id=foundChefPersonId).first()
+        
+        return render_template("meal.html", meal=foundMeal, meal_photos=foundMealPhotos, ings=foundMealIngridients, person=foundPerson, userId=userId)
+    else:
+        return redirect(url_for('login'))
         
         
 @app.route("/addMeal/<userId>", methods=['POST', 'GET'])
@@ -434,6 +461,7 @@ def addMeal(userId):
         
             foundUserId = users.query.filter_by(email=session['user']).first().id
             
+            #if not adding meal to his own
             if int(userId) != int(foundUserId):
                 return redirect(url_for("profile", profileId=foundUserId))
             
@@ -446,17 +474,17 @@ def addMeal(userId):
             chef = chefs(userId)
             db.session.add(chef)
             db.session.commit()
-            
+        
         #get chef id
-        chefId = chefs.query.filter_by(personId=userId).first()
+        chefId = chefs.query.filter_by(personId=userId).first().id
         
         #grab inputs from form
-        addMealName = request.files['addMealName']
+        addMealName = request.form['addMealName']
         addMealIntro = request.form['addMealIntro']
         addMealPrice = request.form['addMealPrice']
         
-        addMealPhotos = request.form['addMealPhoto']
-        addMealIngredients = request.form['addMealIngredients']
+        addMealPhotos = request.files.getlist('addMealPhoto')
+        addMealIngredients = request.form['addMealIngridientList'].split(',')
         
         #assign one by one
         if not addMealName:
@@ -472,24 +500,38 @@ def addMeal(userId):
         db.session.commit()
         
         #get the added meal
-        addedMealId = meals.query.filter_by(chefId=chefId).order_by(id.desc()).first().id
-         
+        addedMealId = meals.query.filter_by(chefId=chefId).order_by(desc(meals.chefId)).first().id
+        
         #add meal photos   
-        if addMealPhoto:
+        if addMealPhotos:
             for addMealPhoto in addMealPhotos:
                 addMealPhoto.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), app.config['UPLOAD_FOLDER'], secure_filename(addMealPhoto.filename)))
                 addMealPhoto = addMealPhoto.filename
+                
+                #add to meal photos db
+                mealPhoto = meal_photos(addedMealId, addMealPhoto)
+                db.session.add(mealPhoto)
+                db.session.commit()
         else:
-            addMealPhoto = "placeholder.jpg"
+            addMealPhotos.append("placeholder.jpg")
+            mealPhotos = meal_photos(addedMealId, "placeholder.jpg")
+            db.session.add(mealPhotos)
+            db.session.commit()
+            
         
         #add meal ingredients 
         if addMealIngredients:
-            addMealIngredients = "ingredients"
-        
+            for addMealIngridient in addMealIngredients:
+                #add to ingridients db
+                ingridient = ings(addedMealId, addMealIngridient)
+                db.session.add(ingridient)
+                db.session.commit()
+        else:
+            addMealIngredients.append("ingridients")
+            ingridients = ings(addedMealId, "ingridients")
+            db.session.add(ingridients)
+            db.session.commit()
+                    
         return redirect(url_for("meal", mealId=addedMealId))      
         
 
-if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True)
