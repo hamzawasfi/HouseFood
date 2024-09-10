@@ -29,26 +29,23 @@
                         <button class="btn nav-link ps-4" href="#"><i
                                 class=" fa-solid fa-bell text-white position-absolute icon"></i>
                             {% if isLoggedIn %}
-                                notification
+                            notification
                             {% else %}
-                                0
+                            0
                             {% endif %}
                         </button>
                     </li>
                     {% endblock %}
                     {% block cart %}
                     <li class="nav-item m-2 position-relative">
-                        <button class="btn nav-link ps-4" 
-                            {% if isLoggedIn %}    
-                                onclick="cart()"
-                            {% else %}
-                                onclick="login()"
-                            {% endif %}><i class=" fa-solid fa-cart-shopping text-white position-absolute icon"></i>
+                        <button class="btn nav-link ps-4" {% if isLoggedIn %} onclick="cart()" {% else %}
+                            onclick="login()" {% endif %}><i
+                                class=" fa-solid fa-cart-shopping text-white position-absolute icon"></i>
                             $
                             {% if isLoggedIn %}
-                                total
+                            total
                             {% else %}
-                                0.00
+                            0.00
                             {% endif %}
                         </button>
                     </li>
@@ -57,17 +54,13 @@
                         <button class="btn btn-outline-light" onclick="about()">About Us</button>
                     </li>
                     <li class="nav-item m-2">
-                        <button class="btn btn-light" 
+                        <button class="btn btn-light" {% if isLoggedIn %} onclick="profile()" {% else %}
+                            onclick="login()" {% endif %}>
                             {% if isLoggedIn %}
-                                onclick="profile({{ userId }})"
+                                {{ person.name }}
                             {% else %}
-                                onclick="login()" 
-                            {% endif %}>
-                                {% if isLoggedIn %}
-                                    {{ person.name }}
-                                {% else %}
-                                    Login
-                                {% endif %}
+                                Login
+                            {% endif %}
                         </button>
                     </li>
                 </ul>
@@ -87,25 +80,18 @@
                         <h5>Section</h5>
                         <ul class="nav flex-column">
                             <li class="nav-item mb-2"><a onclick="home()" class="nav-link p-0 text-muted">Home</a></li>
-                            <li class="nav-item mb-2"><a 
-                                {% if isLoggedIn %} 
-                                    onclick="cart()" 
-                                {% else %}
-                                    onclick="login()" 
-                                {% endif %} class="nav-link p-0 text-muted">Cart</a></li>
-                            <li class="nav-item mb-2"><a onclick="about()" class="nav-link p-0 text-muted">About Us</a></li>
-                            <li class="nav-item mb-2"><a 
-                            {% if isLoggedIn %}
-                                onclick="profile({{ userId }})"
-                            {% else %}
-                                onclick="login()" 
-                            {% endif %}>
-                                {% if isLoggedIn %}
+                            <li class="nav-item mb-2"><a {% if isLoggedIn %} onclick="cart()" {% else %}
+                                    onclick="login()" {% endif %} class="nav-link p-0 text-muted">Cart</a></li>
+                            <li class="nav-item mb-2"><a onclick="about()" class="nav-link p-0 text-muted">About Us</a>
+                            </li>
+                            <li class="nav-item mb-2"><a {% if isLoggedIn %} onclick="profile()" {% else
+                                    %} onclick="login()" {% endif %}>
+                                    {% if isLoggedIn %}
                                     {{ person.name }}
-                                {% else %}
+                                    {% else %}
                                     Login
-                                {% endif %}
-                            </a>
+                                    {% endif %}
+                                </a>
                             </li>
                             {% if isLoggedIn %}
                             <li>
@@ -120,10 +106,10 @@
                             <p>Monthly digest of what's new and exciting from us.</p>
                             <div class="d-flex flex-column flex-sm-row w-100 gap-2">
                                 <label for="newsletter1" class="visually-hidden">Email address</label>
-                                <input id="newsletter1" pattern="[^ @]*@[^ @]*" required name="subscribeEmail" type="text" class="form-control" placeholder="Email address"
-                                    fdprocessedid="eg6hm">
+                                <input id="newsletter1" pattern="[^ @]*@[^ @]*" required name="subscribeEmail"
+                                    type="text" class="form-control" placeholder="Email address" fdprocessedid="eg6hm">
                                 <button class="btn btn-primary" type="submit" fdprocessedid="wrtp3s">Subscribe</button>
-                            </div>                      
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -138,6 +124,7 @@
             </footer>
         </div>
     </footer>
+    <h1>{{profileId}}</h1>
 
     <!--MY JS-->
     <script>
@@ -155,7 +142,7 @@
         }
 
         function cart(userId) {
-            window.location.href = "{{ url_for('cart', userId=userId) }}"
+            window.location.href = "{{ url_for('cart') }}"
         }
 
         function about() {
@@ -163,31 +150,37 @@
         }
 
         function logout(userId) {
-            window.location.href = "{{ url_for('logout', userId=userId) }}"
+            window.location.href = "{{ url_for('logout') }}"
         }
 
-        function editProfile(userId){
-            window.location.href = "{{ url_for('editProfile', profileId=profileId) }}"
+        function editProfile() {
+            {% if person %}
+                window.location.href = "{{ url_for('editProfile', profileId=person.id) }}"
+            {% endif %}
         }
 
-        function addMeal(userId){
-            window.location.href = "{{ url_for('addMeal', userId=profileId) }}"
+        function addMeal(userId) {
+            {% if person %}
+                window.location.href = "{{ url_for('addMeal', userId=person.id) }}"
+            {% endif %}
         }
 
-        function meal(userId, mealId){
+        function meal(userId, mealId) {
             window.location.href = "{{ url_for('meal', userId=userId, mealId='home') }}"
         }
 
-        function profile(userId){
-            window.location.href = "{{ url_for('profile', profileId=userId) }}"
+        function profile() {
+            {% if person %}
+                window.location.href = "{{ url_for('profile', profileId=person.id) }}"
+            {% endif %}
         }
 
-        function sendRequest(){
+        function sendRequest() {
             ////////
             pass;
         }
 
-        function addReview(userId){
+        function addReview() {
             ////////
             pass;
         }

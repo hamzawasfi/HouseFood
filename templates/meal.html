@@ -11,16 +11,26 @@
             <div class="card shadow-lg mx-auto">
                 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                     <ol class="carousel-indicators">
-                        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                        {%if meal.photos.0 %}
+                            {% for count in range(meal.photos|length) %}
+                                <li data-target="#carouselExampleIndicators" data-slide-to="{{ count }}" {% if count == 0 %} class="active" {% endif %}></li>
+                            {% endfor %}
+                        {% else %}
+                            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                        {% endif %}
                     </ol>
                     <div class="carousel-inner">
-                        {% for photo in meal_photos %}
-                        <div class="carousel-item active">
-                            <img class="d-block w-100" src="../static/photos/{{ photo.photo }}" alt="slide">
-                        </div>
-                        {% endfor %}
+                        {%if meal.photos.0 %}
+                            {% for photo in meal.photos %}
+                            <div class="carousel-item active">
+                                <img class="d-block w-100" src="../static/photos/{{ photo.photo }}" alt="slide">
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="carousel-item active">
+                                <img class="d-block w-100" src="../static/photos/placeholder.jpg" alt="slide">
+                            </div>
+                        {% endif %}
                     </div>
                     <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -40,8 +50,8 @@
 
                     <h6 class="card-title mb-2">Ingridients:</h6>
                     <ul class="list-group mb-3">
-                        {% for ing in ings %}
-                            <li class="list-group-item">{{ ing.name }}</li>
+                        {% for ingridient in meal.ingridients %}
+                            <li class="list-group-item">{{ ingridient.name }}</li>
                         {% endfor %}
                     </ul>
                     <h6 class="card-title">Price</h6>
@@ -54,10 +64,15 @@
                         <i class="fa-solid fa-star"></i>
                         <p> 12 reviews</p>
                     </div>
-                    <div class="other-details mb-2">
-                        <a class="btn nav-link text-start" onclick="profile({{ userId }})">{{ person.name }}<i
-                                class="fa-solid fa-arrow-right ms-2"></i></a>
-                    </div>
+                    <form action="/" method="POST">
+                        <div class="other-details mb-2 d-flex">
+                            <input type="hidden" value="{{ meal.id }}" name="mealId">
+                            <input type="hidden" value="{{ person.id }}" name="profileId">
+                            <input type="submit" class="btn nav-link text-start" name="homeSubmit"
+                                value="{{ person.name }}">
+                            <i class="fa-solid fa-arrow-right ms-2"></i></a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

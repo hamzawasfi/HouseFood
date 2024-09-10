@@ -1,4 +1,3 @@
-{% set isLoggedIn=isLoggedIn %}
 {% extends "layout.html" %}
 
 {% block title %}House Food: Home {% endblock %}
@@ -87,15 +86,33 @@
                     </div>
                 </div>
             </div>
+            {% for meal in meals %}
             <div class="carousel-item menu-item meal-item">
-                <div class="card  shadow-lg">
-                    <div class="img-wrapper"><img src="../static/photos/meal2.jpg" class="card-img-top"
-                            alt="Card image cap"></div>
+                <div class="card shadow-lg">
+                    {% if not meal.photos.0 %}
+                    <div class="img-wrapper">
+                        <img src="../static/photos/placeholder.jpg" class="card-img-top" alt="Card image cap">
+                    </div>
+                    {% else %}
+                    <section id="banner" class="banner">
+                        <div id="menu-carousel" class="carousel slide transform carousel-fade p-0" data-ride="carousel"
+                            data-interval="5000">
+                            <div class="carousel-inner p-0">
+                                {% for photo in meal.photos %}
+                                <div {% if photo==meal.photos.0 %} class="carousel-item active img-wrapper w-100" {%
+                                    else %} class="carousel-item img-wrapper w-100 " {% endif %}>
+                                    <img class="d-block w-100" src="../static/photos/{{ photo }}" alt="Second slide">
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </section>
+                    {% endif %}
                     <div class="card-body">
-                        <h5 class="card-title">French fries without meat</h5>
-                        <p class="card-text">some quick information about the dish</p>
+                        <h5 class="card-title">{{ meal.name }}</h5>
+                        <p class="card-text">{{ meal.intro }}</p>
                         <h6>Price</h6>
-                        <p class="card-text">100$</p>
+                        <p class="card-text">${{ meal.price }}</p>
                         <div class="ratings">
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
@@ -104,15 +121,23 @@
                             <i class="fa-solid fa-star"></i>
                             <p> 12 reviews</p>
                         </div>
-                        <div class="other-details">
-                            <a class="btn nav-link text-start" href="">shahd mansy<i
-                                    class="fa-solid fa-arrow-right"></i></a>
-                        </div>
-                        <a href="#" class="btn btn-outline-primary">More Details</a>
-                        <a href="#" class="btn btn-primary">Order Now!</a>
+                    </div>
+                    <div class="other-details mx-3 mb-3">
+                        <form action="/" method="POST">
+                            <input type="hidden" value="{{ meal.person.id }}" name="profileId">
+                            <div class="d-flex">
+                                <i class="fa-solid fa-arrow-right me-1"></i>
+                                <input type="submit" class="btn nav-link text-start" name="homeSubmit" value="{{ meal.person.name }}">
+                            </div>
+                            <input type="hidden" value="{{ meal.id }}" name="mealId">
+                            <input type="submit" class="btn btn-outline-primary" name="homeSubmit" value="More Details">
+                        </form>
+                        <a {% if isLoggedin %} onclick="meal({{ meal.id }})" {% else %} onclick="login()" {% endif %}"
+                            class="btn btn-primary">Order Now!</a>
                     </div>
                 </div>
             </div>
+            {% endfor %}
             <div class="carousel-item menu-item chef-item">
                 <div class="card shadow-lg">
                     <div class="img-wrapper"><img src="../static/photos/chef1.jpg" class="card-img-top"
