@@ -19,6 +19,9 @@
 }
 
 .menu{
+    .card{
+        max-width: 31rem;
+    }
     .form-container{
         max-width: 20rem;
         .search-form{
@@ -27,5 +30,8 @@
         .btn-search{
             margin: auto;
         }
+    }
+    img{
+        object-fit: cover;
     }
 }

@@ -12041,6 +12041,9 @@ footer {
   filter: brightness(0.6);
 }
 
+.menu .card {
+  max-width: 31rem;
+}
 .menu .form-container {
   max-width: 20rem;
 }
@@ -12049,6 +12052,10 @@ footer {
 }
 .menu .form-container .btn-search {
   margin: auto;
+}
+.menu img {
+  -o-object-fit: cover;
+     object-fit: cover;
 }
 
 .menu {

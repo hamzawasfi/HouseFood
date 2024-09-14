@@ -57,9 +57,10 @@ document.addEventListener('scrollend', () => {
 //HOME
 
 //MENU
-let menuWidth = document.getElementsByClassName('carousel-item').length * document.getElementsByClassName('carousel-item')[0].clientWidth / 3;
-let reviewWidth = document.getElementsByClassName('carousel-item-review').length * document.getElementsByClassName('carousel-item')[0].clientWidth / 3;
-
+if (document.getElementsByClassName('carousel-item').length * document.getElementsByClassName('carousel-item')) {
+    let menuWidth = document.getElementsByClassName('carousel-item').length * document.getElementsByClassName('carousel-item')[0].clientWidth / 3;
+    let reviewWidth = document.getElementsByClassName('carousel-item-review').length * document.getElementsByClassName('carousel-item')[0].clientWidth / 3;
+}
 //SETTING THE NEW SLIDE
 let menuScrollPosition = 0;
 let reviewScrollPosition = 0;
@@ -185,17 +186,25 @@ if (btn) {
 if (document.getElementById("addMeal-ingredient-btn")) {
     document.getElementById("addMeal-ingredient-btn").onclick = function () {
         let ingridient = document.getElementById("addMeal-ingredient-txt").value;
-        document.getElementById("addMeal-ingredients").innerHTML += "<li>" + ingridient + "<li><hr>";
-        document.getElementById("addMealIngridientList").value += ingridient + ",";
+        if (ingridient) {
+            document.getElementById("addMeal-ingredients").innerHTML += "<li>" + ingridient + "<li><hr>";
+            document.getElementById("addMealIngridientList").value += ingridient + ",";
+            document.getElementById("addMeal-ingredient-txt").value = "";
+        }
     }
 }
 
-//adding photos to list
-if (document.getElementById("addMeal-photo-btn")) {
-    document.getElementById("addMeal-photo-btn").onclick = function () {
-        let photo = document.getElementById("addMeal-addPhoto").value
-        let photoName = document.getElementById("addMeal-addPhoto").value.split("\\");
-        document.getElementById("addMeal-photos").innerHTML += "<li>" + photoName[photoName.length - 1] + "<li><hr>";
-        document.getElementById("addMealPhotoList").value += photo + ",";
-    }
+//home Post
+for (element of document.getElementsByName("homeSubmitChef")){
+    element.addEventListener('click', function (event) {
+        document.getElementsByName("homeSubmittedChef")[0].value = event.target.id;
+        return true;
+    });
+}
+
+for (element of document.getElementsByName("homeSubmitMeal")){
+    element.addEventListener('click', function (event) {
+        document.getElementsByName("homeSubmittedMeal")[0].value = event.target.id;
+        return true;
+    });
 }

@@ -191,19 +191,29 @@ def home():
         return render_template("home.html", person=person, isLoggedIn=session['isLoggedIn'], persons=foundPersons, meals=foundMeals)
     
     else:
-        #get values from the form
-        homeSubmit = request.form['homeSubmit']
+        #get values from the form.
         profileId = request.form['profileId']
         mealId = request.form['mealId']
+        type = request.form['homeCardType']
+        if type == 'Chef':
+            homeSubmitChef = request.form['homeSubmittedChef']
+            if homeSubmitChef == "homeChefMeal":
+                meal = meals.query.filter_by(id=mealId).first()
+                return redirect(url_for("meal", mealId=meal.id))
+            elif homeSubmitChef == "homeChefChef":
+                profile = persons.query.filter_by(id=profileId).first()
+                return redirect(url_for("profile", profileId=profile.id))
+        if type == 'Meal':
+            homeSubmitMeal = request.form['homeSubmittedMeal']
+            if homeSubmitMeal == "homeMealMeal":
+                meal = meals.query.filter_by(id=mealId).first()
+                return redirect(url_for("meal", mealId=meal.id))
+            elif homeSubmitMeal == "homeMealChef":
+                profile = persons.query.filter_by(id=profileId).first()
+                return redirect(url_for("profile", profileId=profile.id))
+            else:
+                return redirect(url_for("home"))
         
-        #render the templates passing the eald Id or profileId
-        if homeSubmit == "More Details":
-            meal = meals.query.filter_by(id=mealId).first()
-            return redirect(url_for("meal", mealId=meal.id))
-        else:
-            profile = persons.query.filter_by(id=profileId).first()
-            return redirect(url_for("profile", profileId=profile.id))
-
 
 @app.route("/register", methods=['POST', 'GET'])
 def register():
@@ -241,7 +251,7 @@ def register():
             db.session.commit()
                         
             #add to db persons
-            person = persons(user.id, "Name", "photo", "Brief about you", "Your location", 0)
+            person = persons(user.id, "Name", "placeholder.jpg", "Brief about you", "Your location", 0)
             db.session.add(person)
             db.session.commit()
             
@@ -527,7 +537,7 @@ def addMeal(userId):
         db.session.commit()
         
         #add meal photos  
-        if addMealPhotos:
+        if addMealPhotos[0].filename:
             for addMealPhoto in addMealPhotos:
                 addMealPhoto.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), app.config['UPLOAD_FOLDER'], secure_filename(addMealPhoto.filename)))
                 addMealPhoto = addMealPhoto.filename

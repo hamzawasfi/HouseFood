@@ -38,8 +38,10 @@
     </div>
 </section>
 
+
+
 <!--MENU-->
-<section class="menu shadow-lg pt-3" id="menu">
+<section class="menu px-auto p-4 mb-4" id="menu">
     <div class="title text-center">
         <h2>Our Menu</h2>
         <p>Lorem ipsum dolor sit amet.</p>
@@ -61,14 +63,18 @@
     </div>
     <div id="menu-carousel" class="carousel" data-ride="carousel" data-interval="false">
         <div class="carousel-inner">
-            <!--DYNAMIC ADD CARDS-->
+            <!--DYNAMIC CHEFS-->
+            {% for person in persons %}
             <div class="carousel-item menu-item chef-item">
                 <div class="card shadow-lg">
-                    <div class="img-wrapper"><img src="../static/photos/chef1.jpg" class="card-img-top"
-                            alt="Card image cap"></div>
+                    <div class="img-wrapper">
+                        <img {% if person.photo %} src="../static/photos/{{ person.photo }}" {% else %}
+                            src="../static/photos/placeholder.jpg" {% endif %} class="card-img-top"
+                            alt="Card image cap">
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">Hamza</h5>
-                        <p class="card-text">some intorduction about the chef</p>
+                        <h5 class="card-title">{{ person.name }}</h5>
+                        <p class="card-text">{{ person.intro }}</p>
                         <div class="ratings">
                             <i class="fa-solid fa-star"></i>
                             <i class="fa-solid fa-star"></i>
@@ -77,37 +83,52 @@
                             <i class="fa-solid fa-star"></i>
                             <p> 12 reviews</p>
                         </div>
-                        <div class="other-details">
-                            <a class="btn nav-link text-start" href="">Top rated meal<i
-                                    class="fa-solid fa-arrow-right"></i></a>
-                        </div>
-                        <a href="#" class="btn btn-outline-primary">More Details</a>
+                        <form action="{{ url_for('home') }}" method="POST">
+                            <input type="hidden" name="homeCardType" value="Chef">
+                            <input type="hidden" name="homeSubmittedChef">
+                            <input type="hidden" value="{{ person.id }}" name="profileId">
+                            <div class="d-flex">
+                                <i class="fa-solid fa-arrow-right me-1"></i>
+                                <input id="homeChefMeal" type="submit" class="btn nav-link text-start" name="homeSubmitChef" value="Top meal">
+                            </div>
+                            <input type="hidden" value="{{ person.id }}" name="mealId">
+                            <input id="homeChefChef" type="submit" class="btn btn-outline-primary" name="homeSubmitChef" value="More Details">
+                        </form>
                         <a href="#" class="btn btn-primary">Send Request!</a>
                     </div>
                 </div>
             </div>
+            {% endfor %}
+
             {% for meal in meals %}
             <div class="carousel-item menu-item meal-item">
                 <div class="card shadow-lg">
-                    {% if not meal.photos.0 %}
-                    <div class="img-wrapper">
-                        <img src="../static/photos/placeholder.jpg" class="card-img-top" alt="Card image cap">
-                    </div>
-                    {% else %}
-                    <section id="banner" class="banner">
-                        <div id="menu-carousel" class="carousel slide transform carousel-fade p-0" data-ride="carousel"
-                            data-interval="5000">
-                            <div class="carousel-inner p-0">
-                                {% for photo in meal.photos %}
-                                <div {% if photo==meal.photos.0 %} class="carousel-item active img-wrapper w-100" {%
-                                    else %} class="carousel-item img-wrapper w-100 " {% endif %}>
-                                    <img class="d-block w-100" src="../static/photos/{{ photo }}" alt="Second slide">
-                                </div>
-                                {% endfor %}
+                    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                        <div class="carousel-inner p-0">
+                            {%if meal.photos.0 %}
+                            {% for photo in meal.photos %}
+                            <div {% if photo==meal.photos.0 %} class="carousel-item active" {% else %}
+                                class="carousel-item" {% endif %}>
+                                <img class="d-block w-100" src="../static/photos/{{ photo }}" alt="slide">
                             </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="carousel-item active">
+                                <img class="d-block w-100" src="../static/photos/placeholder.jpg" alt="slide">
+                            </div>
+                            {% endif %}
+                            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button"
+                                data-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button"
+                                data-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="sr-only">Next</span>
+                            </a>
                         </div>
-                    </section>
-                    {% endif %}
+                    </div>
                     <div class="card-body">
                         <h5 class="card-title">{{ meal.name }}</h5>
                         <p class="card-text">{{ meal.intro }}</p>
@@ -123,14 +144,17 @@
                         </div>
                     </div>
                     <div class="other-details mx-3 mb-3">
-                        <form action="/" method="POST">
+                        <form name="homeForm" action="{{ url_for('home') }}" method="POST">
+                            <input type="hidden" name="homeCardType" value="Meal">
+                            <input type="hidden" name="homeSubmittedMeal">
                             <input type="hidden" value="{{ meal.person.id }}" name="profileId">
                             <div class="d-flex">
                                 <i class="fa-solid fa-arrow-right me-1"></i>
-                                <input type="submit" class="btn nav-link text-start" name="homeSubmit" value="{{ meal.person.name }}">
+                                <input id="homeMealChef" type="submit" class="btn nav-link text-start" name="homeSubmitMeal"
+                                    value="{{ meal.person.name }}">
                             </div>
                             <input type="hidden" value="{{ meal.id }}" name="mealId">
-                            <input type="submit" class="btn btn-outline-primary" name="homeSubmit" value="More Details">
+                            <input id="homeMealMeal" type="submit" class="btn btn-outline-primary" name="homeSubmitMeal" value="More Details">
                         </form>
                         <a {% if isLoggedin %} onclick="meal({{ meal.id }})" {% else %} onclick="login()" {% endif %}"
                             class="btn btn-primary">Order Now!</a>
@@ -138,183 +162,14 @@
                 </div>
             </div>
             {% endfor %}
-            <div class="carousel-item menu-item chef-item">
-                <div class="card shadow-lg">
-                    <div class="img-wrapper"><img src="../static/photos/chef1.jpg" class="card-img-top"
-                            alt="Card image cap"></div>
-                    <div class="card-body">
-                        <h5 class="card-title">Mohamed Hamza</h5>
-                        <p class="card-text">some intorduction about the chef</p>
-                        <div class="ratings">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <p> 12 reviews</p>
-                        </div>
-                        <div class="other-details">
-                            <a class="btn nav-link text-start" href="">Top rated meal<i
-                                    class="fa-solid fa-arrow-right"></i></a>
-                        </div>
-                        <a href="#" class="btn btn-outline-primary">More Details</a>
-                        <a href="#" class="btn btn-primary">Send Request!</a>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item menu-item chef-item">
-                <div class="card shadow-lg">
-                    <div class="img-wrapper"><img src="../static/photos/chef1.jpg" class="card-img-top"
-                            alt="Card image cap"></div>
-                    <div class="card-body">
-                        <h5 class="card-title">Mohamed Ayman</h5>
-                        <p class="card-text">some intorduction about the chef</p>
-                        <div class="ratings">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <p> 12 reviews</p>
-                        </div>
-                        <div class="other-details">
-                            <a class="btn nav-link text-start" href="">Top rated meal<i
-                                    class="fa-solid fa-arrow-right"></i></a>
-                        </div>
-                        <a href="#" class="btn btn-outline-primary">More Details</a>
-                        <a href="#" class="btn btn-primary">Send Request!</a>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item menu-item chef-item">
-                <div class="card shadow-lg">
-                    <div class="img-wrapper"><img src="../static/photos/chef1.jpg" class="card-img-top"
-                            alt="Card image cap"></div>
-                    <div class="card-body">
-                        <h5 class="card-title">Jeorge Wassuf</h5>
-                        <p class="card-text">some intorduction about the chef</p>
-                        <div class="ratings">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <p> 12 reviews</p>
-                        </div>
-                        <div class="other-details">
-                            <a class="btn nav-link text-start" href="">Top rated meal<i
-                                    class="fa-solid fa-arrow-right"></i></a>
-                        </div>
-                        <a href="#" class="btn btn-outline-primary">More Details</a>
-                        <a href="#" class="btn btn-primary">Send Request!</a>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item menu-item meal-item">
-                <div class="card shadow-lg">
-                    <div class="img-wrapper"><img src="../static/photos/meal2.jpg" class="card-img-top"
-                            alt="Card image cap"></div>
-                    <div class="card-body">
-                        <h5 class="card-title">meat with sauce</h5>
-                        <p class="card-text">some quick information about the dish</p>
-                        <div class="ratings">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <p> 12 reviews</p>
-                        </div>
-                        <div class="other-details">
-                            <a class="btn nav-link text-start" href="">the name of the chef <i
-                                    class="fa-solid fa-arrow-right"></i></a>
-                        </div>
-                        <a href="#" class="btn btn-outline-primary">More Details</a>
-                        <a href="#" class="btn btn-primary">Order Now!</a>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item menu-item meal-item">
-                <div class="card shadow-lg">
-                    <div class="img-wrapper"><img src="../static/photos/meal2.jpg" class="card-img-top"
-                            alt="Card image cap"></div>
-                    <div class="card-body">
-                        <h5 class="card-title">chicken sauce</h5>
-                        <p class="card-text">some quick information about the dish</p>
-                        <div class="ratings">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <p> 12 reviews</p>
-                        </div>
-                        <div class="other-details">
-                            <a class="btn nav-link text-start" href="">the name of the chef <i
-                                    class="fa-solid fa-arrow-right"></i></a>
-                        </div>
-                        <a href="#" class="btn btn-outline-primary">More Details</a>
-                        <a href="#" class="btn btn-primary">Order Now!</a>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item menu-item meal-item">
-                <div class="card shadow-lg">
-                    <div class="img-wrapper"><img src="../static/photos/meal1.jpg" class="card-img-top"
-                            alt="Card image cap"></div>
-                    <div class="card-body">
-                        <h5 class="card-title">Sweat potato salad</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk
-                            of the card's content.</p>
-                        <div class="ratings">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <p> 12 reviews</p>
-                        </div>
-                        <div class="other-details">
-                            <a class="btn nav-link text-start" href="">rahma<i class="fa-solid fa-arrow-right"></i></a>
-                        </div>
-                        <a href="#" class="btn btn-outline-primary">More Details</a>
-                        <a href="#" class="btn btn-primary">Order Now!</a>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item menu-item meal-item">
-                <div class="card shadow-lg">
-                    <div class="img-wrapper"><img src="../static/photos/meal4.jpg" class="card-img-top"
-                            alt="Card image cap"></div>
-                    <div class="card-body">
-                        <h5 class="card-title">mashed carrots</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk
-                            of the card's content.</p>
-                        <div class="ratings">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <p> 12 reviews</p>
-                        </div>
-                        <div class="other-details">
-                            <a class="btn nav-link text-start" href="">araby <i class="fa-solid fa-arrow-right"></i></a>
-                        </div>
-                        <a href="#" class="btn btn-outline-primary">More Details</a>
-                        <a href="#" class="btn btn-primary">Order Now!</a>
-                    </div>
-                </div>
-            </div>
+            <a class="carousel-control-prev" href="#menu-prev" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#menu-next" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
         </div>
-        <a class="carousel-control-prev" href="#menu-prev" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#menu-next" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a>
-    </div>
 </section>
 {% endblock %}

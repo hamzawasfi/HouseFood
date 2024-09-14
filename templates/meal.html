@@ -22,7 +22,7 @@
                     <div class="carousel-inner">
                         {%if meal.photos.0 %}
                             {% for photo in meal.photos %}
-                            <div class="carousel-item active">
+                            <div {% if photo==meal.photos.0 %} class="carousel-item active" {% else %} class="carousel-item" {% endif %}>
                                 <img class="d-block w-100" src="../static/photos/{{ photo.photo }}" alt="slide">
                             </div>
                             {% endfor %}

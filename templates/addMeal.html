@@ -14,35 +14,15 @@
         <div class="d-flex">
             <div class="col-6 me-3">
                 <div class="card shadow-lg mx-auto">
-                    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-                        <ol class="carousel-indicators">
-                            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                        </ol>
-                        <div class="carousel-inner">
-                            <div class="carousel-item active">
-                                <img class="d-block w-100" src="../static/photos/placeholder.jpg" alt="First slide">
-                            </div>
-                        </div>
-                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button"
-                            data-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button"
-                            data-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Next</span>
-                        </a>
-                    </div>
+                    <img class="d-block w-100" src="../static/photos/placeholder.jpg" alt="First slide">
                     <div class="mb-3 mt-2 text-center">
                         <label for="formFile" class="form-label">Add pictures of the meal:</label>
-                        <input name="addMealPhoto" class="form-control" type="file" multiple id="addMeal-addPhoto">
-                        <input type="button" value="add" name="addMealPhoto" class="btn btn-primary" id="addMeal-photo-btn" placeholder="Enter an ingredient">
-                            </li>
-                            <li class="list-group-item">
-                                <input type="hidden" name="addMealPhotoList" id="addMealPhotoList" value="">
-                                <ul id='addMeal-photos' class="list-group"></ul>
-                            </li>
+                        <input name="addMealPhoto" class="form-control" type="file" multiple="true" id="addMeal-addPhoto">
+                        </li>
+                        <li class="list-group-item">
+                            <input type="hidden" name="addMealPhotoList" id="addMealPhotoList" value="">
+                            <ul id='addMeal-photos' class="list-group"></ul>
+                        </li>
                     </div>
                 </div>
             </div>
@@ -57,8 +37,10 @@
                         <h6 class="card-title mb-2">Ingridients:</h6>
                         <ul class="list-group mb-3">
                             <li class="list-group-item">
-                                <input type="text" name="addMealIngredient" class="form-control add-meal-input" id="addMeal-ingredient-txt" placeholder="Enter an ingredient">
-                                <input type="button" value="add" name="addMealIngredient" class="btn btn-primary" id="addMeal-ingredient-btn" placeholder="Enter an ingredient">
+                                <input type="text" name="addMealIngredient" class="form-control add-meal-input"
+                                    id="addMeal-ingredient-txt" placeholder="Enter an ingredient">
+                                <input type="button" value="add" name="addMealIngredientBtn" class="btn btn-primary"
+                                    id="addMeal-ingredient-btn">
                             </li>
                             <li class="list-group-item">
                                 <input type="hidden" name="addMealIngridientList" id="addMealIngridientList" value="">
