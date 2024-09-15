@@ -43,7 +43,7 @@
                                 class=" fa-solid fa-cart-shopping text-white position-absolute icon"></i>
                             $
                             {% if isLoggedIn %}
-                            total
+                            {{ total }}
                             {% else %}
                             0.00
                             {% endif %}
@@ -142,7 +142,9 @@
         }
 
         function cart(userId) {
-            window.location.href = "{{ url_for('cart') }}"
+            {% if person %}
+                window.location.href = "{{ url_for('cart', personId=person.id) }}"
+            {% endif %}
         }
 
         function about() {

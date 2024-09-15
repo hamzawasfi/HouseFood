@@ -64,14 +64,16 @@
                         <i class="fa-solid fa-star"></i>
                         <p> 12 reviews</p>
                     </div>
-                    <form action="/" method="POST">
-                        <div class="other-details mb-2 d-flex">
-                            <input type="hidden" value="{{ meal.id }}" name="mealId">
-                            <input type="hidden" value="{{ person.id }}" name="profileId">
-                            <input type="submit" class="btn nav-link text-start" name="homeSubmit"
-                                value="{{ person.name }}">
-                            <i class="fa-solid fa-arrow-right ms-2"></i></a>
+                    <form name="homeForm" action="{{ url_for('home') }}" method="POST">
+                        <input type="hidden" name="homeCardType" value="Meal">
+                        <input type="hidden" name="homeSubmittedMeal">
+                        <input type="hidden" value="{{ meal.person.id }}" name="profileId">
+                        <div class="d-flex">
+                            <i class="fa-solid fa-arrow-right me-1"></i>
+                            <input id="homeMealChef" type="submit" class="btn nav-link text-start" name="homeSubmitMeal"
+                                value="{{ meal.person.name }}">
                         </div>
+                        <input type="hidden" value="{{ meal.id }}" name="mealId">
                     </form>
                 </div>
             </div>

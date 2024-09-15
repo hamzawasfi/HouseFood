@@ -57,10 +57,8 @@ document.addEventListener('scrollend', () => {
 //HOME
 
 //MENU
-if (document.getElementsByClassName('carousel-item').length * document.getElementsByClassName('carousel-item')) {
-    let menuWidth = document.getElementsByClassName('carousel-item').length * document.getElementsByClassName('carousel-item')[0].clientWidth / 3;
-    let reviewWidth = document.getElementsByClassName('carousel-item-review').length * document.getElementsByClassName('carousel-item')[0].clientWidth / 3;
-}
+let menuWidth = document.getElementsByClassName('carousel-item').length * document.getElementsByClassName('carousel-item')[0].clientWidth;
+
 //SETTING THE NEW SLIDE
 let menuScrollPosition = 0;
 let reviewScrollPosition = 0;
@@ -77,8 +75,7 @@ const nextMouseDown = (e) => {
                 menuScrollPosition += 100;
                 $(e.target.parentNode.previousElementSibling.previousElementSibling).animate({ scrollLeft: menuScrollPosition }, 600);
             }
-        }
-        else {
+        } else {
             if (reviewScrollPosition < menuWidth) {
                 reviewScrollPosition += 100;
                 $(e.target.parentNode.previousElementSibling.previousElementSibling).animate({ scrollLeft: reviewScrollPosition }, 600);
@@ -197,14 +194,18 @@ if (document.getElementById("addMeal-ingredient-btn")) {
 //home Post
 for (element of document.getElementsByName("homeSubmitChef")){
     element.addEventListener('click', function (event) {
-        document.getElementsByName("homeSubmittedChef")[0].value = event.target.id;
+        for (element of document.getElementsByName("homeSubmittedChef")){
+            element.value = event.target.id;
+        } 
         return true;
     });
 }
 
 for (element of document.getElementsByName("homeSubmitMeal")){
     element.addEventListener('click', function (event) {
-        document.getElementsByName("homeSubmittedMeal")[0].value = event.target.id;
+        for (element of document.getElementsByName("homeSubmittedMeal")){
+            element.value = event.target.id;
+        } 
         return true;
     });
 }

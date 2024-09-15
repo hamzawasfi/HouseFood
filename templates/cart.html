@@ -5,35 +5,50 @@
 {% block main %}
 
 <section class="cart align-items-center" id="cart">
+    {% if cards %}
+    {% for card in cards%}
     <div class="cart-item d-flex align-items-center justify-content-between shadow-lg my-3">
-        <div>
-            <img class="card-img-top" src="../static/photos/meal4.jpg" alt="Card image cap">
+        {%if card.meal.photos.0 %}
+        {% for photo in card.meal.photos %}
+        <div {% if photo==card.meal.photos.0 %} class="carousel-item active" {% else %} class="carousel-item" {% endif
+            %}>
+            <img class="d-block w-100" src="../static/photos/{{ photo }}" alt="slide">
         </div>
+        {% endfor %}
+        {% else %}
+        <div class="carousel-item active">
+            <img class="d-block w-100" src="../static/photos/placeholder.jpg" alt="slide">
+        </div>
+        {% endif %}
         <div class="card-body justify-content-between py-2 d-flex flex-column mx-3">
-            <h5>Meal title</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
-                card's
-                content.</p>
+            <h5>{{ card.meal.name }}</h5>
+            <p class="card-text">{{ card.meal.intro }}</p>
             <div class="input-group my-3 d-flex justify-content-center">
                 <div class="input-group-prepend">
                     <span class="input-group-text">Amount: </span>
                 </div>
-                <input type="number" class="form-control amount" disabled id="exampleInputEmail1" placeholder="1">
+                <input type="number" class="form-control amount" disabled id="exampleInputEmail1"
+                    placeholder="{{ card.amount }}">
                 <div class="input-group-prepend">
                     <span class="input-group-text">Total: $</span>
                 </div>
-                <input type="text" disabled placeholder="100.00" class="form-control total"
+                <input type="text" disabled placeholder="{{ card.meal.total }}" class="form-control total"
                     aria-label="Amount (to the nearest dollar)">
             </div>
         </div>
     </div>
+    {% endfor %}
+    {% endif %}
+
+
+
     <div class="row text-center">
         <form action="">
             <div class="input-group my-1 px-auto justify-content-center">
                 <div class="input-group-prepend">
                     <span class="input-group-text">Total: $</span>
                 </div>
-                <input type="text" disabled placeholder="100.00" class="form-control total"
+                <input type="text" disabled placeholder="{{ total }}" class="form-control total"
                     aria-label="Amount (to the nearest dollar)">
             </div>
             <button type="submit" class="btn btn-primary">Purchase Now!</button>
