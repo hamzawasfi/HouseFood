@@ -12235,15 +12235,17 @@ footer {
 }
 .cart-item {
   max-width: 70rem;
+  max-height: 10rem;
   margin-inline: auto;
   border-radius: 10px;
 }
-.cart .card-img-top {
-  max-width: 12rem;
-  height: auto;
+.cart img {
+  max-width: 100%;
+  max-height: 10rem;
   border-radius: 10px;
 }
-.cart .amount, .cart .total {
+.cart .amount,
+.cart .total {
   max-width: 5rem;
   text-align: center;
   margin-inline: 1rem;

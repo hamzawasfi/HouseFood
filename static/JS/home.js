@@ -57,8 +57,10 @@ document.addEventListener('scrollend', () => {
 //HOME
 
 //MENU
-let menuWidth = document.getElementsByClassName('carousel-item').length * document.getElementsByClassName('carousel-item')[0].clientWidth;
-
+let menuWidth;
+if (document.getElementsByClassName('carousel-item').length * document.getElementsByClassName('carousel-item')[0]){
+    menuWidth = document.getElementsByClassName('carousel-item').length * document.getElementsByClassName('carousel-item')[0].clientWidth;
+}
 //SETTING THE NEW SLIDE
 let menuScrollPosition = 0;
 let reviewScrollPosition = 0;

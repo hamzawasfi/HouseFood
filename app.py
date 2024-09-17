@@ -143,11 +143,15 @@ class carts(db.Model):
     mealId = db.Column(db.Integer, db.ForeignKey(meals.id), nullable=False)
     personId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
     amount = db.Column(db.Integer, nullable=False)
+    meal = meals
     
     def __init__(self, mealId, personId, amount):
         self.mealId = mealId
         self.personId = personId
         self.amount = amount
+    
+    def addMeal(self, meal):
+        self.meal = meal
         
 with app.app_context():
     db.create_all()
@@ -160,10 +164,27 @@ def home():
     #check if logged in
     if "user" in session:
         user = session["user"]
-        total = session["total"]
         session["isLoggedIn"] = True
         user = users.query.filter_by(email=user).first()
         person = persons.query.filter_by(userId=user.id).first()
+        
+        total = 0
+        cartItems = carts.query.filter_by(personId=user.id).all()
+        
+        if cartItems:
+            for item in cartItems:
+                meal = meals.query.filter_by(id=item.mealId).first()
+                #photos
+                foundMealPhotos = meal_photos.query.filter_by(mealId=meal.id)
+                foundPhotos = list()
+                for foundMealPhoto in foundMealPhotos:
+                    foundPhotos.append(foundMealPhoto.photo)
+                meal.addPhotos(foundPhotos)
+                        
+                mealTotal = float(meal.price) * float(item.amount)
+                total += mealTotal
+                meal.addTotal(mealTotal)
+        session["total"] = total
     
     if request.method == 'GET':
     
@@ -189,7 +210,7 @@ def home():
         foundPersons = []
         for foundChef in foundChefs:
             foundPersons.append(persons.query.filter_by(id=foundChef.personId).first())
-            
+                
         
         if not session['isLoggedIn']:
             person = {'id':'home', 'name':'Name'}
@@ -220,13 +241,14 @@ def home():
                 profile = persons.query.filter_by(id=profileId).first()
                 return redirect(url_for("profile", profileId=profile.id))
             elif homeSubmitMeal == "homeMealOrder":
-                meal = meals.query.filter_by(id=mealId).first()
-                for foundMeal in meal:
-                    foundMealPhotos = meal_photos.query.filter_by(mealId=foundMeal.id)
-                    foundPhotos = list()
-                    for foundMealPhoto in foundMealPhotos:
-                        foundPhotos.append(foundMealPhoto.photo)
-                    foundMeal.addPhotos(foundPhotos)
+                cart = carts.query.filter_by(mealId=mealId, personId=person.id).first()
+                if cart:
+                    cart.amount += 1
+                    db.session.commit()
+                else:
+                    cart = carts(mealId, person.id, 1)
+                    db.session.add(cart)
+                    db.session.commit()
                 return redirect(url_for("home"))
         return redirect(url_for("home"))
 
@@ -270,33 +292,12 @@ def register():
             db.session.add(person)
             db.session.commit()
             
-            #total
-            total = 0
-            cartItems = carts.query.filter_by(personId=user.id).first()
-        
-            if cartItems:
-                for item in cartItems:
-                    meal = meals.query.filter_by(id=item.mealId).first()
-                    for foundMeal in meal:
-                        #photos
-                        foundMealPhotos = meal_photos.query.filter_by(mealId=foundMeal.id)
-                        foundPhotos = list()
-                        for foundMealPhoto in foundMealPhotos:
-                            foundPhotos.append(foundMealPhoto.photo)
-                        foundMeal.addPhotos(foundPhotos)
-                        
-                        mealTotal = float(foundMeal.price) * float(foundMeal.amount)
-                        total += mealTotal
-                        foundMeal.addTotal(mealTotal)
-            
-            # Forget any user email
             session.clear()
             
             #add to sessions
             session.permanent = True
             session['user'] = registerEmail
             session['isLoggedIn'] = True
-            session["total"] = total
             
             #render home page with input of user id and is logged in
             return redirect(url_for("home"))    
@@ -336,25 +337,6 @@ def login():
             flash("Password Is Not Correct", "info")
             return redirect(url_for("login"))
         
-        #total
-        total = 0
-        user = users.query.filter_by(email=loginEmail).first()
-        cartItems = carts.query.filter_by(personId=user.id).first()
-        
-        if cartItems:
-            for item in cartItems:
-                meal = meals.query.filter_by(id=item.mealId).first()
-                for foundMeal in meal:
-                    #photos
-                    foundMealPhotos = meal_photos.query.filter_by(mealId=foundMeal.id)
-                    foundPhotos = list()
-                    for foundMealPhoto in foundMealPhotos:
-                        foundPhotos.append(foundMealPhoto.photo)
-                    foundMeal.addPhotos(foundPhotos)
-                        
-                    mealTotal = float(foundMeal.price) * float(foundMeal.amount)
-                    total += mealTotal
-                    foundMeal.addTotal(mealTotal)
         
         # Forget any user email
         session.clear()
@@ -363,7 +345,6 @@ def login():
         session.permanent = True
         session['user'] = loginEmail
         session['isLoggedIn'] = True
-        session['total'] = total
                 
         return redirect(url_for("home"))
     else:
@@ -428,22 +409,23 @@ def cart(personId):
         person = persons.query.filter_by(userId=user.id).first()
         
         total = 0
-        cartItems = carts.query.filter_by(personId=user.id).first()
+        cartItems = carts.query.filter_by(personId=user.id).all()
         
         if cartItems:
             for item in cartItems:
                 meal = meals.query.filter_by(id=item.mealId).first()
-                for foundMeal in meal:
-                    #photos
-                    foundMealPhotos = meal_photos.query.filter_by(mealId=foundMeal.id)
-                    foundPhotos = list()
-                    for foundMealPhoto in foundMealPhotos:
-                        foundPhotos.append(foundMealPhoto.photo)
-                    foundMeal.addPhotos(foundPhotos)
+                #photos
+                foundMealPhotos = meal_photos.query.filter_by(mealId=meal.id)
+                foundPhotos = list()
+                for foundMealPhoto in foundMealPhotos:
+                    foundPhotos.append(foundMealPhoto.photo)
+                meal.addPhotos(foundPhotos)
                     
-                    mealTotal = float(foundMeal.price) * float(foundMeal.amount)
-                    total += mealTotal
-                    foundMeal.addTotal(mealTotal)
+                mealTotal = float(meal.price) * float(item.amount)
+                total += mealTotal
+                meal.addTotal(mealTotal)
+                item.addMeal(meal)
+                    
 
         return render_template("cart.html", person=person, total=total, isLoggedIn=session["isLoggedIn"], cards=cartItems)
     else:
@@ -495,7 +477,9 @@ def editProfile(profileId):
         if "user" in session:
             session['isLoggedIn'] = True
             total = session["total"]
-            user = users.query.filter_by(email=session['user']).first()
+            user = session["user"]
+            user = users.query.filter_by(email=user).first()
+            person = persons.query.filter_by(id=user.id).first()
             profile = persons.query.filter_by(userId=profileId).first()
             
             #check if my profile
@@ -505,7 +489,7 @@ def editProfile(profileId):
         else:
             return redirect(url_for("login"))
         
-        return render_template("editProfile.html", profile=profile, total=total, isLoggedIn=session["isLoggedIn"])
+        return render_template("editProfile.html", person=person, profile=profile, total=total, isLoggedIn=session["isLoggedIn"])
     else:
         #grab inputs from form
         editProfilePhoto = request.files['editProfilePhoto']

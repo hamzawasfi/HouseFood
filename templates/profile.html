@@ -143,12 +143,13 @@
                                         <form name="homeForm" action="{{ url_for('home') }}" method="POST">
                                             <input type="hidden" name="homeCardType" value="Meal">
                                             <input type="hidden" name="homeSubmittedMeal">
-                                            <input type="hidden" value="{{ meal.person.id }}" name="profileId">
+                                            <div class="d-flex">
+                                                <input type="hidden" value="{{ meal.person.id }}" name="profileId">
+                                            </div>
                                             <input type="hidden" value="{{ meal.id }}" name="mealId">
                                             <input id="homeMealMeal" type="submit" class="btn btn-outline-primary" name="homeSubmitMeal" value="More Details">
+                                            {% if person.id != profile.id %}<input id="homeMealOrder" type="submit" class="btn btn-outline-primary" name="homeSubmitMeal" value="Order Now">{% endif %}
                                         </form>
-                                        {% if not profile.isMine %}<a {% if isLoggedin %} onclick="meal({{ meal.id }})" {% else %} onclick="login()" {% endif %}"
-                                            class="btn btn-primary">Order Now!</a>{% endif %}
                                     </div>
                                 </div>
                             </div>

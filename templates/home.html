@@ -155,8 +155,8 @@
                             </div>
                             <input type="hidden" value="{{ meal.id }}" name="mealId">
                             <input id="homeMealMeal" type="submit" class="btn btn-outline-primary" name="homeSubmitMeal" value="More Details">
+                            {% if meal.person.id != person.id %}<input id="homeMealOrder" type="submit" class="btn btn-outline-primary" name="homeSubmitMeal" value="Order Now">{% endif %}
                         </form>
-                        <a {% if isLoggedin %} onclick="meal({{ meal.id }})" {% else %} onclick="login()" {% endif %} class="btn btn-primary">Order Now!</a>
                     </div>
                 </div>
             </div>

@@ -5,6 +5,7 @@
 {% block main %}
 
 <section class="meal px-auto p-4 mb-4" id="meal">
+    <form name="homeForm" action="{{ url_for('home') }}" method="POST">
     <h2 class="card-title text-center mb-3">{{ meal.name }}</h2>
     <div class="d-flex">
         <div class="col-6 me-3">
@@ -64,7 +65,6 @@
                         <i class="fa-solid fa-star"></i>
                         <p> 12 reviews</p>
                     </div>
-                    <form name="homeForm" action="{{ url_for('home') }}" method="POST">
                         <input type="hidden" name="homeCardType" value="Meal">
                         <input type="hidden" name="homeSubmittedMeal">
                         <input type="hidden" value="{{ meal.person.id }}" name="profileId">
@@ -74,16 +74,14 @@
                                 value="{{ meal.person.name }}">
                         </div>
                         <input type="hidden" value="{{ meal.id }}" name="mealId">
-                    </form>
                 </div>
             </div>
         </div>
     </div>
-    <form class="d-flex justify-content-center mt-3">
         <div class="form-group me-2">
             <input type="number" class="form-control amount" id="exampleInputEmail1" placeholder="1">
         </div>
-        <button type="submit" class="btn btn-primary">Order Now!</button>
+        {% if person.id != profile.id %}<input id="homeMealOrder" type="submit" class="btn btn-outline-primary" name="homeSubmitMeal" value="Order Now">{% endif %}
     </form>
 </section>
 
