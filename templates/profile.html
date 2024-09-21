@@ -224,7 +224,7 @@
                             aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
-                                    <form action="{{ url_for('profile', {{ profile.id }}) }}" method="POST">
+                                    <form action="{{ url_for('profile', profileId=profile.id) }}" method="POST">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="exampleModalLongTitle">Write Your Review</h5>
                                         </div>
@@ -286,7 +286,7 @@
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
                                                 data-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary">Add Review</button>
+                                            <button type="submit" class="btn btn-primary">Add Review</button>
                                         </div>
                                     </form>
                                 </div>
@@ -297,111 +297,22 @@
                 </div>
                 <div id="menu-carousel" class="carousel" data-ride="carousel" data-interval="false">
                     <div class="carousel-inner">
+                        {% if reviews %}
+                        {% for review in reviews%}
                         <div class="carousel-item card bg-light mb-3" style="max-width: 18rem;">
-                            <div class="card-header">Name</div>
+                            <div class="card-header">{{ review.person }}</div>
                             <div class="card-body">
-                                <h5 class="card-title">Name of the meal</h5>
-                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
-                                    aspernatur accusantium. Nisi, officiis sunt. Qui.</p>
+                                <h5 class="card-title">{{ review.meal }}</h5>
+                                <p class="card-text">{{ review.text }}</p>
                                 <div class="ratings">
+                                    {% for i in range(review.review) %}
                                     <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
-                        <div class="carousel-item card bg-light mb-3" style="max-width: 18rem;">
-                            <div class="card-header">Name</div>
-                            <div class="card-body">
-                                <h5 class="card-title">Name of the meal</h5>
-                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
-                                    aspernatur accusantium. Nisi, officiis sunt. Qui.</p>
-                                <div class="ratings">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item card bg-light mb-3" style="max-width: 18rem;">
-                            <div class="card-header">Name</div>
-                            <div class="card-body">
-                                <h5 class="card-title">Name of the meal</h5>
-                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
-                                    aspernatur accusantium. Nisi, officiis sunt. Qui.</p>
-                                <div class="ratings">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item card bg-light mb-3" style="max-width: 18rem;">
-                            <div class="card-header">Name</div>
-                            <div class="card-body">
-                                <h5 class="card-title">Name of the meal</h5>
-                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
-                                    aspernatur accusantium. Nisi, officiis sunt. Qui.</p>
-                                <div class="ratings">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item card bg-light mb-3" style="max-width: 18rem;">
-                            <div class="card-header">Name</div>
-                            <div class="card-body">
-                                <h5 class="card-title">Name of the meal</h5>
-                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
-                                    aspernatur accusantium. Nisi, officiis sunt. Qui.</p>
-                                <div class="ratings">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item card bg-light mb-3" style="max-width: 18rem;">
-                            <div class="card-header">Name</div>
-                            <div class="card-body">
-                                <h5 class="card-title">Name of the meal</h5>
-                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
-                                    aspernatur accusantium. Nisi, officiis sunt. Qui.</p>
-                                <div class="ratings">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item card bg-light mb-3" style="max-width: 18rem;">
-                            <div class="card-header">Name</div>
-                            <div class="card-body">
-                                <h5 class="card-title">Name of the meal</h5>
-                                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia,
-                                    aspernatur accusantium. Nisi, officiis sunt. Qui.</p>
-                                <div class="ratings">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                </div>
-                            </div>
-                        </div>
+                        {% endfor %}
+                        {% endif %}
                     </div>
                     <a class="carousel-control-prev" href="#menu-prev" role="button" data-slide="prev">
                         <span class="carousel-control-prev-icon" id="prev-review" aria-hidden="true"></span>

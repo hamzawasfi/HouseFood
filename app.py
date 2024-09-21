@@ -130,12 +130,20 @@ class reviews(db.Model):
     personId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
     text = db.Column(db.String(), nullable=False)
     review = db.Column(db.Integer, nullable=False)
+    person = str
+    meal = str
     
     def __init__(self, mealId, personId, text, review):
         self.mealId = mealId
         self.personId = personId
         self.text = text
         self.review = review
+        
+    def addPerson(self, person):
+        self.person = person
+        
+    def addMeal(self, meal):
+        self.meal = meal
         
         
 class carts(db.Model):
@@ -451,6 +459,8 @@ def profile(profileId):
         if request.method =="GET":
             if chef:
                 meal = meals.query.filter_by(chefId=chef.id).all()
+                review = reviews.query.filter_by(personId=profileId).all()
+                
                 #get meal photos ,chef
                 for foundMeal in meal:
                     #photos
@@ -459,7 +469,15 @@ def profile(profileId):
                     for foundMealPhoto in foundMealPhotos:
                         foundPhotos.append(foundMealPhoto.photo)
                     foundMeal.addPhotos(foundPhotos)
-                return render_template("profile.html", person=person, total=total, isLoggedIn=session['isLoggedIn'], profile=profile, meals=meal)    
+                
+                #get the reviews
+                for foundReview in review:
+                    foundReviewMeal = meals.query.filter_by(id=foundReview.mealId).first().name
+                    
+                    foundReview.addPerson(person.name)
+                    foundReview.addMeal(foundReviewMeal)
+                
+                return render_template("profile.html", person=person, total=total, isLoggedIn=session['isLoggedIn'], profile=profile, meals=meal, reviews=review)    
             else:
                 return render_template("profile.html", person=person, total=total, isLoggedIn=session['isLoggedIn'], profile=profile)
         else:
@@ -472,7 +490,7 @@ def profile(profileId):
             db.session.add(review)
             db.session.commit()
             
-            return render_template("profile.html", person=person, total=total, isLoggedIn=session['isLoggedIn'], profile=profile, meals=meal) 
+            return redirect(url_for("profile", profileId=profile.id)) 
     else:
         #redirect to login
         return redirect(url_for("login"))
