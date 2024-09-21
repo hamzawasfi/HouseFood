@@ -81,7 +81,7 @@
         <div class="form-group me-2">
             <input type="number" class="form-control amount" id="exampleInputEmail1" placeholder="1">
         </div>
-        {% if person.id != profile.id %}<input id="homeMealOrder" type="submit" class="btn btn-outline-primary" name="homeSubmitMeal" value="Order Now">{% endif %}
+        {% if person.id != meal.person.id %}<input id="homeMealOrder" type="submit" class="btn btn-outline-primary" name="homeSubmitMeal" value="Order Now">{% endif %}
     </form>
 </section>
 

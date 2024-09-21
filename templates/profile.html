@@ -60,7 +60,41 @@
                     <a {% if profile.isMine %} onclick="editProfile()" {% else %} onclick="sendRequest()" {% endif %}
                         class="profile-sidebar-link">
                         <i class="fa-solid fa-pen-to-square"></i>
-                        <span>{% if profile.isMine %}Edit{% else %}Send Request{% endif %}</span>
+                        <span>{% if profile.isMine %}Edit{% else %}
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                data-target="#exampleModalCenter">
+                                Send Reqeust
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <form>
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLongTitle">Write Your Message
+                                                </h5>
+                                            </div>
+                                            <div class="modal-body">
+                                                <!--text-->
+                                                <div class="form-group col-md-6 mt-3">
+                                                    <label for="inputEmail4">Your Message...</label>
+                                                    <textarea rows="3" type="text" name="requestText"
+                                                        class="form-control" placeholder="Your Message..."></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary">Send</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </span>
                     </a>
                 </li>
             </ul>
@@ -147,8 +181,11 @@
                                                 <input type="hidden" value="{{ meal.person.id }}" name="profileId">
                                             </div>
                                             <input type="hidden" value="{{ meal.id }}" name="mealId">
-                                            <input id="homeMealMeal" type="submit" class="btn btn-outline-primary" name="homeSubmitMeal" value="More Details">
-                                            {% if person.id != profile.id %}<input id="homeMealOrder" type="submit" class="btn btn-outline-primary" name="homeSubmitMeal" value="Order Now">{% endif %}
+                                            <input id="homeMealMeal" type="submit" class="btn btn-outline-primary"
+                                                name="homeSubmitMeal" value="More Details">
+                                            {% if person.id != profile.id %}<input id="homeMealOrder" type="submit"
+                                                class="btn btn-outline-primary" name="homeSubmitMeal"
+                                                value="Order Now">{% endif %}
                                         </form>
                                     </div>
                                 </div>
@@ -176,8 +213,86 @@
                     <div class="title text-center">
                         <h2>Customers Reviews</h2>
                         <p>Lorem ipsum dolor sit amet.</p>
-                        {% if not profile.isMine %}<button class="btn btn-primary mb-3" type="submit"
-                            onclick="addReview(user.Id)"><i class="fa-solid fa-plus"></i></button>{% endif %}
+                        {% if not profile.isMine %}
+                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                            data-target="#exampleModalCenterR">
+                            +
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModalCenterR" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <form action="{{ url_for('profile', {{ profile.id }}) }}" method="POST">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLongTitle">Write Your Review</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!--meal id-->
+                                            <div class="form-group col-md-4">
+                                                <label for="inputState">Meal</label>
+                                                <select id="inputState" name="reviewMealId" class="form-control">
+                                                    <option selected value="">Choose...</option>
+                                                    {% if meals %}
+                                                    {% for meal in meals %}
+                                                    <option value="{{ meal.id }}">{{ meal.name }}</option>
+                                                    {% endfor %}
+                                                    {% endif %}
+                                                </select>
+                                            </div>
+
+                                            <!--person id-->
+                                            <input type="hidden" value="{{ profile.id }}" name="reviewPersonId">
+
+                                            <!--text-->
+                                            <div class="form-group col-md-6 mt-3">
+                                                <label for="inputEmail4">Your Review</label>
+                                                <textarea rows="3" type="text" name="reviewText" class="form-control"
+                                                    placeholder="Your Review..."></textarea>
+                                            </div>
+
+                                            <!--stars-->
+                                            <div class="form-group" id="rating-ability-wrapper">
+                                                <label class="control-label" for="rating">
+                                                    <input type="hidden" id="selected_rating" name="reviewRating"
+                                                        value="" required="required">
+                                                </label>
+                                                <h2 class="bold rating-header">
+                                                    <span class="selected-rating">0</span><small> / 5</small>
+                                                </h2>
+                                                <button type="button" class="btnrating btn btn-default btn-lg"
+                                                    data-attr="1" id="rating-star-1">
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                </button>
+                                                <button type="button" class="btnrating btn btn-default btn-lg"
+                                                    data-attr="2" id="rating-star-2">
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                </button>
+                                                <button type="button" class="btnrating btn btn-default btn-lg"
+                                                    data-attr="3" id="rating-star-3">
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                </button>
+                                                <button type="button" class="btnrating btn btn-default btn-lg"
+                                                    data-attr="4" id="rating-star-4">
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                </button>
+                                                <button type="button" class="btnrating btn btn-default btn-lg"
+                                                    data-attr="5" id="rating-star-5">
+                                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-primary">Add Review</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
                 <div id="menu-carousel" class="carousel" data-ride="carousel" data-interval="false">

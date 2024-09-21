@@ -433,7 +433,7 @@ def cart(personId):
             
 
 
-@app.route("/profile/<profileId>")
+@app.route("/profile/<profileId>", methods=['POST', 'GET'])
 def profile(profileId):
     session['isLoggedIn'] = False
     total = 0
@@ -448,20 +448,31 @@ def profile(profileId):
         if int(user.id) == int(profile.id):
             profile.addIsMine(True)
         
-        if chef:
-            meal = meals.query.filter_by(chefId=chef.id).all()
-            #get meal photos ,chef
-            for foundMeal in meal:
-                #photos
-                foundMealPhotos = meal_photos.query.filter_by(mealId=foundMeal.id)
-                foundPhotos = list()
-                for foundMealPhoto in foundMealPhotos:
-                    foundPhotos.append(foundMealPhoto.photo)
-                foundMeal.addPhotos(foundPhotos)
-            return render_template("profile.html", person=person, total=total, isLoggedIn=session['isLoggedIn'], profile=profile, meals=meal)    
+        if request.method =="GET":
+            if chef:
+                meal = meals.query.filter_by(chefId=chef.id).all()
+                #get meal photos ,chef
+                for foundMeal in meal:
+                    #photos
+                    foundMealPhotos = meal_photos.query.filter_by(mealId=foundMeal.id)
+                    foundPhotos = list()
+                    for foundMealPhoto in foundMealPhotos:
+                        foundPhotos.append(foundMealPhoto.photo)
+                    foundMeal.addPhotos(foundPhotos)
+                return render_template("profile.html", person=person, total=total, isLoggedIn=session['isLoggedIn'], profile=profile, meals=meal)    
+            else:
+                return render_template("profile.html", person=person, total=total, isLoggedIn=session['isLoggedIn'], profile=profile)
         else:
-            return render_template("profile.html", person=person, total=total, isLoggedIn=session['isLoggedIn'], profile=profile)
-        
+            mealId = request.form['reviewMealId']
+            personId = request.form['reviewPersonId']
+            text = request.form['reviewText']
+            rating = request.form['reviewRating']
+            
+            review = reviews(mealId, personId, text, rating)
+            db.session.add(review)
+            db.session.commit()
+            
+            return render_template("profile.html", person=person, total=total, isLoggedIn=session['isLoggedIn'], profile=profile, meals=meal) 
     else:
         #redirect to login
         return redirect(url_for("login"))
