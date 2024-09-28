@@ -1,15 +1,4 @@
 
-<body>
-    <!--NAVBAR-->
-    <header id="header" class="header w-100">
-        <nav class="navbar navbar-dark bg-dark navbar-expand-lg">
-            <a class="navbar-brand" onclick="home()"><img src="../static/photos/logo.jpg" alt="house-food-logo"></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse ml-auto" id="navbarNav">
-                <ul class="navbar-nav px-3">
                     {% block notification %}
                     <li class="nav-item m-2 position-relative">
                         <button class="btn nav-link ps-4" href="#"><i
@@ -22,41 +11,4 @@
                         </button>
                     </li>
                     {% endblock %}
-                    {% block cart %}
-                    <li class="nav-item m-2 position-relative">
-                        <button class="btn nav-link ps-4" 
-                            {% if isLoggedIn %}    
-                                onclick="cart()"
-                            {% else %}
-                                onclick="login()"
-                            {% endif %}><i class=" fa-solid fa-cart-shopping text-white position-absolute icon"></i>
-                            $
-                            {% if isLoggedIn %}
-                                {{ user.total }}
-                            {% else %}
-                                0.00
-                            {% endif %}
-                        </button>
-                    </li>
-                    {% endblock %}
-                    <li class="nav-item m-2">
-                        <button class="btn btn-outline-light" onclick="about()">About Us</button>
-                    </li>
-                    <li class="nav-item m-2">
-                        <button class="btn btn-light" 
-                            {% if isLoggedIn %}
-                                onclick="profile()"
-                            {% else %}
-                                onclick="login()" 
-                            {% endif %}>
-                                {% if isLoggedIn %}
-                                    {{ user.username }}
-                                {% else %}
-                                    Login
-                                {% endif %}
-                        </button>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </header>
+                    

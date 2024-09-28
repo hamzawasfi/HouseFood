@@ -53,6 +53,9 @@ class persons(db.Model):
     location = db.Column(db.String(100), nullable=True)
     earned = db.Column(db.Integer, nullable=True)
     isMine = False
+    reviewCount = 0
+    reviewAvg = 0
+    topMeal = None
     
     def __init__(self, userId, name, photo, intro, location, earned):
         self.userId = userId
@@ -64,6 +67,15 @@ class persons(db.Model):
         
     def addIsMine(self, isMine):
         self.isMine = isMine
+        
+    def addReviewCount(self, reviewCount):
+        self.reviewCount = reviewCount
+        
+    def addReviewAvg(self, reviewAvg):
+        self.reviewAvg = reviewAvg
+        
+    def addTopMeal(self, topMeal):
+        self.topMeal = topMeal
         
         
 class chefs(db.Model):
@@ -84,6 +96,8 @@ class meals(db.Model):
     photos = list()
     ingridients = list()
     total = 0
+    reviewCount = 0
+    reviewAvg = 0
     
     def __init__(self, chefId, name, intro, price):
         self.chefId = chefId
@@ -102,6 +116,12 @@ class meals(db.Model):
         
     def addTotal(self, total):
         self.total = total
+        
+    def addReviewCount(self, reviewCount):
+        self.reviewCount = reviewCount
+        
+    def addReviewAvg(self, reviewAvg):
+        self.reviewAvg = reviewAvg
     
 
 class meal_photos(db.Model):
@@ -207,18 +227,48 @@ def home():
             foundMeal.addPerson(foundMealPerson.id, foundMealPerson.name)
             
             #photos
-            foundMealPhotos = meal_photos.query.filter_by(mealId=foundMeal.id)
+            foundMealPhotos = meal_photos.query.filter_by(mealId=foundMeal.id).all()
             foundPhotos = list()
             for foundMealPhoto in foundMealPhotos:
                 foundPhotos.append(foundMealPhoto.photo)
             foundMeal.addPhotos(foundPhotos)
+            
+            #reviews
+            foundMealReviews = reviews.query.filter_by(mealId=foundMeal.id).all()
+            if foundMealReviews:
+                foundMeal.addReviewCount(len(foundMealReviews))
+                avgReviews = 0
+                for foundMealReview in foundMealReviews:
+                    avgReviews += foundMealReview.review
+                avgReviews /= len(foundMealReviews)
+                foundMeal.addReviewAvg(int(avgReviews))
+            
         
         #get persons these are chefs 
         foundChefs = chefs.query.all()
         foundPersons = []
         for foundChef in foundChefs:
             foundPersons.append(persons.query.filter_by(id=foundChef.personId).first())
-                
+        
+        #reviews
+        foundChefReviews = reviews.query.filter_by(personId = foundChef.personId).all()
+        if foundChefReviews:
+            for foundPerson in foundPersons:
+                foundPerson.addReviewCount(len(foundChefReviews))                
+                avgReviews = 0
+                topMeal = None
+                for foundChefReview in foundChefReviews:
+                    avgReviews += foundChefReview.review
+                    
+                    if foundChefReviews.index(foundChefReview) == 0:
+                        topMeal = foundChefReview.mealId
+                    elif foundChefReview.review > foundChefReviews[foundChefReviews.index(foundChefReview) - 1].review:
+                        topMeal = foundChefReview.mealId
+                foundPerson.addTopMeal(meals.query.filter_by(id=topMeal).first())       
+                avgReviews /= len(foundChefReviews)
+                foundPerson.addReviewAvg(int(avgReviews))
+        
+        #top meals
         
         if not session['isLoggedIn']:
             person = {'id':'home', 'name':'Name'}
@@ -231,6 +281,11 @@ def home():
         profileId = request.form['profileId']
         mealId = request.form['mealId']
         type = request.form['homeCardType']
+        amount = 1
+        try:
+            amount = request.form['mealMealAmount']
+        except:
+            pass
         if type == 'Chef':
             homeSubmitChef = request.form['homeSubmittedChef']
             print(homeSubmitChef)
@@ -251,10 +306,10 @@ def home():
             elif homeSubmitMeal == "homeMealOrder":
                 cart = carts.query.filter_by(mealId=mealId, personId=person.id).first()
                 if cart:
-                    cart.amount += 1
+                    cart.amount += amount
                     db.session.commit()
                 else:
-                    cart = carts(mealId, person.id, 1)
+                    cart = carts(mealId, person.id, amount)
                     db.session.add(cart)
                     db.session.commit()
                 return redirect(url_for("home"))
@@ -469,6 +524,25 @@ def profile(profileId):
                     for foundMealPhoto in foundMealPhotos:
                         foundPhotos.append(foundMealPhoto.photo)
                     foundMeal.addPhotos(foundPhotos)
+                    
+                    #reviews
+                    foundMealReviews = reviews.query.filter_by(mealId=foundMeal.id).all()
+                    if foundMealReviews:
+                        foundMeal.addReviewCount(len(foundMealReviews))
+                        avgReviews = 0
+                        for foundMealReview in foundMealReviews:
+                            avgReviews += foundMealReview.review
+                        avgReviews /= len(foundMealReviews)
+                        foundMeal.addReviewAvg(int(avgReviews))
+                
+                foundChefReviews = reviews.query.filter_by(personId = profile.id).all()
+                if foundChefReviews:
+                    profile.addReviewCount(len(foundChefReviews))                
+                    avgReviews = 0
+                    for foundChefReview in foundChefReviews:
+                        avgReviews += foundChefReview.review
+                    avgReviews /= len(foundChefReviews)
+                    profile.addReviewAvg(int(avgReviews))
                 
                 #get the reviews
                 for foundReview in review:
@@ -582,6 +656,15 @@ def meal(mealId):
         #get person
         foundPerson = persons.query.filter_by(id=foundChefPersonId).first()
         foundMeal.addPerson(foundPerson.id, foundPerson.name)
+        
+        #get reviews
+        foundMealReviews = reviews.query.filter_by(mealId=foundMeal.id).all()
+        foundMeal.addReviewCount(len(foundMealReviews))
+        avgReviews = 0
+        for foundMealReview in foundMealReviews:
+            avgReviews += foundMealReview.review
+        avgReviews /= len(foundMealReviews)
+        foundMeal.addReviewAvg(int(avgReviews))
         
         return render_template("meal.html", person=person, total=total, isLoggedIn=["isLoggedIn"], meal=foundMeal)
     else:

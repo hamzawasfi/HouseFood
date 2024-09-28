@@ -1,7 +1,0 @@
-
-                <div class="ratings">
-                    {% for i in range({{ chefCard.rating }}) %}
-                    <i class="fa-solid fa-star"></i>
-                    {% endfor %}
-                    <p> {{ chefCard.reviews }} reviews</p>
-                </div>

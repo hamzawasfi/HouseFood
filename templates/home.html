@@ -64,43 +64,43 @@
     <div id="menu-carousel" class="carousel" data-ride="carousel" data-interval="false">
         <div class="carousel-inner">
             <!--DYNAMIC CHEFS-->
-            {% for person in persons %}
+            {% for p in persons %}
             <div class="carousel-item menu-item chef-item">
                 <div class="card shadow-lg">
                     <div class="img-wrapper">
-                        <img {% if person.photo %} src="../static/photos/{{ person.photo }}" {% else %}
+                        <img {% if p.photo %} src="../static/photos/{{ p.photo }}" {% else %}
                             src="../static/photos/placeholder.jpg" {% endif %} class="card-img-top"
                             alt="Card image cap">
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title">{{ person.name }}</h5>
-                        <p class="card-text">{{ person.intro }}</p>
+                        <h5 class="card-title">{{ p.name }}</h5>
+                        <p class="card-text">{{ p.intro }}</p>
                         <div class="ratings">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <p> 12 reviews</p>
+                            {% for i in range(p.reviewAvg) %}
+                                <i class="fa-solid fa-star"></i>
+                            {% endfor %}
+                            <p> {{ p.reviewCount }} reviews</p>
                         </div>
                         <form action="{{ url_for('home') }}" method="POST">
                             <input type="hidden" name="homeCardType" value="Chef">
                             <input type="hidden" name="homeSubmittedChef">
-                            <input type="hidden" value="{{ person.id }}" name="profileId">
+                            <input type="hidden" value="{{ p.id }}" name="profileId">
                             <div class="d-flex">
                                 <i class="fa-solid fa-arrow-right me-1"></i>
                                 <input id="homeChefMeal" type="submit" class="btn nav-link text-start"
                                     name="homeSubmitChef" value="Top meal">
                             </div>
-                            <input type="hidden" value="{{ person.id }}" name="mealId">
+                            <input type="hidden" value="{{ p.id }}" name="mealId">
                             <input id="homeChefChef" type="submit" class="btn btn-outline-primary" name="homeSubmitChef"
                                 value="More Details">
                         </form>
 
+                        {% if p.id != person.id %}
                         <button type="button" class="btn btn-primary" data-toggle="modal"
                             data-target="#exampleModalCenter">
                             Send Reqeust
                         </button>
+                        {% endif %}
 
                         <!-- Modal -->
                         <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
@@ -169,12 +169,10 @@
                         <h6>Price</h6>
                         <p class="card-text">${{ meal.price }}</p>
                         <div class="ratings">
+                            {% for i in range(meal.reviewAvg) %}
                             <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <p> 12 reviews</p>
+                            {% endfor %}
+                            <p>{{ meal.reviewCount }} reviews</p>
                         </div>
                     </div>
                     <div class="other-details mx-3 mb-3">

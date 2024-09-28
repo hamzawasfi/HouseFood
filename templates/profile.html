@@ -47,12 +47,10 @@
                 <li class="profile-sidebar-item">
                     <a href="#reviews" class="profile-sidebar-link">
                         <div class="ratings">
-                            <i class="fa-solid fa-star"></i>
-                            <i class="i-hide fa-solid fa-star"></i>
-                            <i class="i-hide fa-solid fa-star"></i>
-                            <i class="i-hide fa-solid fa-star"></i>
-                            <i class="i-hide fa-solid fa-star"></i>
-                            <p> 12 reviews</p>
+                            {% for i in range(profile.reviewAvg) %}
+                                <i class="fa-solid fa-star"></i>
+                            {% endfor %}
+                            <p> {{ profile.reviewCount }} reviews</p>
                         </div>
                     </a>
                 </li>
@@ -165,12 +163,10 @@
                                     <p class="card-text">${{ meal.price }}</p>
 
                                     <div class="ratings">
+                                        {% for i in range(meal.reviewAvg) %}
                                         <i class="fa-solid fa-star"></i>
-                                        <i class="fa-solid fa-star"></i>
-                                        <i class="fa-solid fa-star"></i>
-                                        <i class="fa-solid fa-star"></i>
-                                        <i class="fa-solid fa-star"></i>
-                                        <p> 12 reviews</p>
+                                        {% endfor %}
+                                        <p>{{ meal.reviewCount }} reviews</p>
                                     </div>
 
                                     <div class="other-details mx-3 mb-3">
