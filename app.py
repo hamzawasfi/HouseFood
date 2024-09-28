@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
 from werkzeug.utils import secure_filename
 import os
+import datetime
 
 app = Flask(__name__)
 app.secret_key = "HouseFood"
@@ -77,6 +78,28 @@ class persons(db.Model):
     def addTopMeal(self, topMeal):
         self.topMeal = topMeal
         
+        
+class notifications(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    personId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
+    type = db.Column(db.String(100), nullable=False)
+    date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+
+
+class purchases(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    notificationId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
+    fromId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
+    mealId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
+    earned = db.Column(db.Integer, nullable=False)
+      
+      
+class requests(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    notificationId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
+    fromId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
+    text = db.Column(db.String(), nullable=True)
+      
         
 class chefs(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
