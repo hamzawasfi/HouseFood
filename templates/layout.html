@@ -26,14 +26,30 @@
                 <ul class="navbar-nav px-3">
                     {% block notification %}
                     <li class="nav-item m-2 position-relative">
-                        <button class="btn nav-link ps-4" href="#"><i
+                        <button class="btn nav-link ps-4" data-toggle="modal" data-target="#notiModal"><i
                                 class=" fa-solid fa-bell text-white position-absolute icon"></i>
                             {% if isLoggedIn %}
                             notification
                             {% else %}
-                            0
+                            {{ notificationCount }}
                             {% endif %}
                         </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="notiModal" tabindex="-1" role="dialog"
+                            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <ul class="list-group">
+                                        {% for noti in notifications}
+                                        <li class="list-group-item">
+                                            <h3>{{ noti.type }}</h3>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </li>
                     {% endblock %}
                     {% block cart %}
@@ -50,16 +66,18 @@
                         </button>
                     </li>
                     {% endblock %}
+                    {% block about %}
                     <li class="nav-item m-2">
                         <button class="btn btn-outline-light" onclick="about()">About Us</button>
                     </li>
+                    {% endblock %}
                     <li class="nav-item m-2">
                         <button class="btn btn-light" {% if isLoggedIn %} onclick="profile()" {% else %}
                             onclick="login()" {% endif %}>
                             {% if isLoggedIn %}
-                                {{ person.name }}
+                            {{ person.name }}
                             {% else %}
-                                Login
+                            Login
                             {% endif %}
                         </button>
                     </li>
@@ -80,12 +98,14 @@
                         <h5>Section</h5>
                         <ul class="nav flex-column">
                             <li class="nav-item mb-2"><a onclick="home()" class="nav-link p-0 text-muted">Home</a></li>
-                            <li class="nav-item mb-2"><a {% if isLoggedIn %} onclick="cart()" {% else %}
-                                    onclick="login()" {% endif %} class="nav-link p-0 text-muted">Cart</a></li>
-                            <li class="nav-item mb-2"><a onclick="about()" class="nav-link p-0 text-muted">About Us</a>
+                            {% block fCart %}<li class="nav-item mb-2"><a {% if isLoggedIn %} onclick="cart()" {% else
+                                    %} onclick="login()" {% endif %} class="nav-link p-0 text-muted">Cart</a></li>{%
+                            endblock %}
+                            {% block fAbout %}<li class="nav-item mb-2"><a onclick="about()"
+                                    class="nav-link p-0 text-muted">About Us</a>{% endblock %}
                             </li>
-                            <li class="nav-item mb-2"><a {% if isLoggedIn %} onclick="profile()" {% else
-                                    %} onclick="login()" {% endif %}>
+                            <li class="nav-item mb-2"><a {% if isLoggedIn %} onclick="profile()" {% else %}
+                                    onclick="login()" {% endif %}>
                                     {% if isLoggedIn %}
                                     {{ person.name }}
                                     {% else %}
@@ -143,7 +163,7 @@
 
         function cart(userId) {
             {% if person %}
-                window.location.href = "{{ url_for('cart', personId=person.id) }}"
+            window.location.href = "{{ url_for('cart', personId=person.id) }}"
             {% endif %}
         }
 
@@ -157,13 +177,13 @@
 
         function editProfile() {
             {% if person %}
-                window.location.href = "{{ url_for('editProfile', profileId=person.id) }}"
+            window.location.href = "{{ url_for('editProfile', profileId=person.id) }}"
             {% endif %}
         }
 
         function addMeal(userId) {
             {% if person %}
-                window.location.href = "{{ url_for('addMeal', userId=person.id) }}"
+            window.location.href = "{{ url_for('addMeal', userId=person.id) }}"
             {% endif %}
         }
 
@@ -173,7 +193,7 @@
 
         function profile() {
             {% if person %}
-                window.location.href = "{{ url_for('profile', profileId=person.id) }}"
+            window.location.href = "{{ url_for('profile', profileId=person.id) }}"
             {% endif %}
         }
 

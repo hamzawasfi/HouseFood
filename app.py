@@ -84,6 +84,10 @@ class notifications(db.Model):
     personId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
     type = db.Column(db.String(100), nullable=False)
     date = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    
+    def __init__(self, personId, type):
+        self.personId = personId
+        self.type = type
 
 
 class purchases(db.Model):
@@ -92,6 +96,12 @@ class purchases(db.Model):
     fromId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
     mealId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
     earned = db.Column(db.Integer, nullable=False)
+    
+    def __init__(self, notificationId, fromId, mealId, earned):
+        self.notificationId = notificationId
+        self.fromId = fromId
+        self.mealId = mealId
+        self.earned = earned
       
       
 class requests(db.Model):
@@ -99,14 +109,12 @@ class requests(db.Model):
     notificationId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
     fromId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
     text = db.Column(db.String(), nullable=True)
-      
-        
-class chefs(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    personId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
     
-    def __init__(self, personId):
-        self.personId = personId
+    def __init__(self, notificationId, fromId, text):
+        self.notificationId = notificationId
+        self.fromId = fromId
+        self.text = text
+      
         
         
 class meals(db.Model):
@@ -145,6 +153,19 @@ class meals(db.Model):
         
     def addReviewAvg(self, reviewAvg):
         self.reviewAvg = reviewAvg
+    
+    
+    
+class chefs(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    personId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
+    topMeal = meals
+    
+    def __init__(self, personId):
+        self.personId = personId
+        
+    def addTopMeal(self, topMeal):
+        self.topMeal = topMeal
     
 
 class meal_photos(db.Model):
@@ -205,6 +226,7 @@ class carts(db.Model):
         self.meal = meal
         
 with app.app_context():
+    #db.drop_all()
     db.create_all()
 app.run(debug=True)
           
@@ -271,33 +293,48 @@ def home():
         foundChefs = chefs.query.all()
         foundPersons = []
         for foundChef in foundChefs:
-            foundPersons.append(persons.query.filter_by(id=foundChef.personId).first())
-        
-        #reviews
-        foundChefReviews = reviews.query.filter_by(personId = foundChef.personId).all()
-        if foundChefReviews:
-            for foundPerson in foundPersons:
-                foundPerson.addReviewCount(len(foundChefReviews))                
-                avgReviews = 0
-                topMeal = None
-                for foundChefReview in foundChefReviews:
-                    avgReviews += foundChefReview.review
+            chefPerson = persons.query.filter_by(id=foundChef.personId).first()
+            foundPersons.append(chefPerson)
+
+            topReview = -1
+            topMeal = meals
+            chefReviews = reviews.query.filter_by(personId=chefPerson.id).all()
+            for chefReview in chefReviews:
+                if chefReview.review > topReview:
+                    topReview = chefReview.review
+                    topMeal = meals.query.filter_by(id=chefReview.mealId).first()
                     
-                    if foundChefReviews.index(foundChefReview) == 0:
-                        topMeal = foundChefReview.mealId
-                    elif foundChefReview.review > foundChefReviews[foundChefReviews.index(foundChefReview) - 1].review:
-                        topMeal = foundChefReview.mealId
-                foundPerson.addTopMeal(meals.query.filter_by(id=topMeal).first())       
-                avgReviews /= len(foundChefReviews)
-                foundPerson.addReviewAvg(int(avgReviews))
+            foundChef.addTopMeal(topMeal)
+                
+        #reviews
+        if foundChefs:
+            foundChefReviews = reviews.query.filter_by(personId = foundChef.personId).all()
+            if foundChefReviews:
+                for foundPerson in foundPersons:
+                    foundPerson.addReviewCount(len(foundChefReviews))                
+                    avgReviews = 0
+                    topMeal = None
+                    for foundChefReview in foundChefReviews:
+                        avgReviews += foundChefReview.review
+                        
+                        if foundChefReviews.index(foundChefReview) == 0:
+                            topMeal = foundChefReview.mealId
+                        elif foundChefReview.review > foundChefReviews[foundChefReviews.index(foundChefReview) - 1].review:
+                            topMeal = foundChefReview.mealId
+                    foundPerson.addTopMeal(meals.query.filter_by(id=topMeal).first())       
+                    avgReviews /= len(foundChefReviews)
+                    foundPerson.addReviewAvg(int(avgReviews))        
         
-        #top meals
+        #notifications
+        notis = notifications.query.filter_by(personId=user.id).all()
+        notisLength = len(notis)
+            
         
         if not session['isLoggedIn']:
             person = {'id':'home', 'name':'Name'}
             total = 0
             
-        return render_template("home.html", person=person, total=total, isLoggedIn=session['isLoggedIn'], persons=foundPersons, meals=foundMeals)
+        return render_template("home.html", person=person, total=total, isLoggedIn=session['isLoggedIn'], persons=foundPersons, meals=foundMeals, notificationCount=notisLength, notifications=notis)
     
     else:
         #get values from the form.
@@ -305,15 +342,23 @@ def home():
         mealId = request.form['mealId']
         type = request.form['homeCardType']
         amount = 1
+
         try:
             amount = request.form['mealMealAmount']
         except:
             pass
+        
+        try:
+            topMeal = request.form['chefTopMeal']
+        except:
+            pass
+        
+        
         if type == 'Chef':
             homeSubmitChef = request.form['homeSubmittedChef']
             print(homeSubmitChef)
             if homeSubmitChef == "homeChefMeal":
-                meal = meals.query.filter_by(id=mealId).first()
+                meal = meals.query.filter_by(id=topMeal).first()
                 return redirect(url_for("meal", mealId=meal.id))
             elif homeSubmitChef == "homeChefChef":
                 profile = persons.query.filter_by(id=profileId).first()
@@ -461,12 +506,7 @@ def subscribe():
     message = Message("Subscribed To HouseFood", sender='noreply@housefood.com', recipients=[subscribeEmail])
     message.body = "Thank you for subscribing to HouseFood!"
     mail.send(message)
-    
-    session['isLoggedIn'] = False
-    if "user" in session:
-        session['isLoggedIn'] = True
-            
-        return redirect(url_for("home"))    
+        
     return redirect(url_for("home"))
 
 
@@ -481,7 +521,8 @@ def about():
         session["isLoggedIn"] = True
         user = users.query.filter_by(email=user).first()
         person = persons.query.filter_by(userId=user.id).first()
-    return render_template("about.html", person=person, total=total, isLoggedIn=session["isLoggedIn"])
+        return render_template("about.html", person=person, total=total, isLoggedIn=session["isLoggedIn"])
+    return render_template("about.html", person=None, total=0, isLoggedIn=session["isLoggedIn"])
 
 
 @app.route("/cart/<personId>")
@@ -495,23 +536,59 @@ def cart(personId):
         person = persons.query.filter_by(userId=user.id).first()
         
         total = 0
-        cartItems = carts.query.filter_by(personId=user.id).all()
         
-        if cartItems:
-            for item in cartItems:
-                meal = meals.query.filter_by(id=item.mealId).first()
-                #photos
-                foundMealPhotos = meal_photos.query.filter_by(mealId=meal.id)
-                foundPhotos = list()
-                for foundMealPhoto in foundMealPhotos:
-                    foundPhotos.append(foundMealPhoto.photo)
-                meal.addPhotos(foundPhotos)
+        if request.method == 'GET':
+            cartItems = carts.query.filter_by(personId=user.id).all()
+            if cartItems:
+                for item in cartItems:
+                    meal = meals.query.filter_by(id=item.mealId).first()
+                    #photos
+                    foundMealPhotos = meal_photos.query.filter_by(mealId=meal.id)
+                    foundPhotos = list()
+                    for foundMealPhoto in foundMealPhotos:
+                        foundPhotos.append(foundMealPhoto.photo)
+                    meal.addPhotos(foundPhotos)
+                        
+                    mealTotal = float(meal.price) * float(item.amount)
+                    total += mealTotal
+                    meal.addTotal(mealTotal)
+                    item.addMeal(meal)
+        if request.method == 'POST':
+            total = request.form['cartPurchase']
+            
+            #send email to seller
+            cartItems = carts.query.filter_by(personId=user.id).all()
+            if cartItems:
+                for item in cartItems:
+                    meal = meals.query.filter_by(id=item.mealId).first()
+                    seller = chefs.query.filter_by(id=meal.chefId).first()
                     
-                mealTotal = float(meal.price) * float(item.amount)
-                total += mealTotal
-                meal.addTotal(mealTotal)
-                item.addMeal(meal)
+                    mealTotal = int(meal.price) * int(item.amount)
                     
+                    sellerEmail = seller.email
+                    message = Message(f"Succesfull Sell at HouseFood", sender='noreply@housefood.com', recipients=[sellerEmail])
+                    message.body = "You have earned ${mealTotal} from selling {meal.name} from {person.name}, {item.amount} times, congratulations!"
+                    mail.send(message)
+                    
+                    #add earned to seller
+                    seller.earned += mealTotal
+                    
+                    #send notification to seller
+                    notification = notifications(seller.id, "purchase")
+                    db.session.add(notification)
+                    db.session.commit()
+                    
+                    purchase = purchases(notification.id, user.id, meal.id, mealTotal)
+                    db.session.add(purchase)
+                    db.session.commit()
+                                
+            #send email to buyer
+            buyerEmail = user.email
+            message = Message(f"Succesfull purchase at HouseFood", sender='noreply@housefood.com', recipients=[buyerEmail])
+            message.body = "You have paid ${total} at HouseFood, Thanks!"
+            mail.send(message)
+            
+            return redirect(url_for("cart", person.id))
 
         return render_template("cart.html", person=person, total=total, isLoggedIn=session["isLoggedIn"], cards=cartItems)
     else:

@@ -1,6 +1,13 @@
 {% extends "layout.html" %}
 
 {% block title %}About{% endblock %}
+{% if not isLoggedIn %}
+    {% block notification %}{% endblock %}
+    {% block cart %}{% endblock %}
+    {% block fCart %}{% endblock %}
+{% endif %}
+{% block about %}{% endblock %}
+{% block fAbout %} {% endblock %}
 
 {% block main %}
 

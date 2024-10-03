@@ -45,13 +45,13 @@
 
 
     <div class="row text-center">
-        <form action="">
+        <form action="{{ url_for('cart', person.id) }}" method="POST">
             <div class="input-group my-1 px-auto justify-content-center">
                 <div class="input-group-prepend">
                     <span class="input-group-text">Total: $</span>
                 </div>
                 <input type="text" disabled placeholder="{{ total }}" class="form-control total"
-                    aria-label="Amount (to the nearest dollar)">
+                    name="cartPurchase" aria-label="Amount (to the nearest dollar)">
             </div>
             <button type="submit" class="btn btn-primary">Purchase Now!</button>
         </form>
