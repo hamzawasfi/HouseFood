@@ -1,14 +1,13 @@
 
-                    {% block notification %}
-                    <li class="nav-item m-2 position-relative">
-                        <button class="btn nav-link ps-4" href="#"><i
-                                class=" fa-solid fa-bell text-white position-absolute icon"></i>
-                            {% if isLoggedIn %}
-                                {{ user.notificationsLength }}
-                            {% else %}
-                                0
-                            {% endif %}
-                        </button>
-                    </li>
-                    {% endblock %}
+
+
+
+
+                    dispaying blocks conditionally in (home, about):
+                    {% if not isLoggedIn %}
+                    {% block notification%}{% endblock %}
+                    {% block cart %}{% endblock %}
+                    {% block fcart %}{% endblock %}
+                    {% endif %}
+
                     

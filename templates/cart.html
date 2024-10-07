@@ -45,7 +45,7 @@
 
 
     <div class="row text-center">
-        <form action="{{ url_for('cart', person.id) }}" method="POST">
+        <form action="{{ url_for('cart', personId=person.id) }}" method="POST">
             <div class="input-group my-1 px-auto justify-content-center">
                 <div class="input-group-prepend">
                     <span class="input-group-text">Total: $</span>

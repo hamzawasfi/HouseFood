@@ -28,11 +28,7 @@
                     <li class="nav-item m-2 position-relative">
                         <button class="btn nav-link ps-4" data-toggle="modal" data-target="#notiModal"><i
                                 class=" fa-solid fa-bell text-white position-absolute icon"></i>
-                            {% if isLoggedIn %}
-                            notification
-                            {% else %}
                             {{ notificationCount }}
-                            {% endif %}
                         </button>
 
                         <!-- Modal -->
@@ -41,11 +37,14 @@
                             <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                     <ul class="list-group">
-                                        {% for noti in notifications}
+                                        <li><h3>recent notifications:</h3></li>
+                                        {% if notis %}
+                                        {% for noti in notifications %}
                                         <li class="list-group-item">
                                             <h3>{{ noti.type }}</h3>
                                         </li>
                                         {% endfor %}
+                                        {% endif %}
                                     </ul>
                                 </div>
                             </div>
@@ -98,9 +97,7 @@
                         <h5>Section</h5>
                         <ul class="nav flex-column">
                             <li class="nav-item mb-2"><a onclick="home()" class="nav-link p-0 text-muted">Home</a></li>
-                            {% block fCart %}<li class="nav-item mb-2"><a {% if isLoggedIn %} onclick="cart()" {% else
-                                    %} onclick="login()" {% endif %} class="nav-link p-0 text-muted">Cart</a></li>{%
-                            endblock %}
+                            {% block fCart %}<li class="nav-item mb-2"><a {% if isLoggedIn %} onclick="cart()" {% else%} onclick="login()" {% endif %} class="nav-link p-0 text-muted">Cart</a></li>{%endblock %}
                             {% block fAbout %}<li class="nav-item mb-2"><a onclick="about()"
                                     class="nav-link p-0 text-muted">About Us</a>{% endblock %}
                             </li>

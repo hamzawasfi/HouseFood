@@ -114,9 +114,21 @@ class requests(db.Model):
         self.notificationId = notificationId
         self.fromId = fromId
         self.text = text
-      
+    
+    
+    
+class chefs(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    personId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
+    topMeal = object
+    
+    def __init__(self, personId):
+        self.personId = personId
         
-        
+    def addTopMeal(self, topMeal):
+        self.topMeal = topMeal
+    
+
 class meals(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     chefId = db.Column(db.Integer, db.ForeignKey(chefs.id), nullable=False)
@@ -153,20 +165,7 @@ class meals(db.Model):
         
     def addReviewAvg(self, reviewAvg):
         self.reviewAvg = reviewAvg
-    
-    
-    
-class chefs(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    personId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
-    topMeal = meals
-    
-    def __init__(self, personId):
-        self.personId = personId
         
-    def addTopMeal(self, topMeal):
-        self.topMeal = topMeal
-    
 
 class meal_photos(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -237,151 +236,151 @@ def home():
     #check if logged in
     if "user" in session:
         user = session["user"]
-        session["isLoggedIn"] = True
+        session['isLoggedIn'] = True
         user = users.query.filter_by(email=user).first()
         person = persons.query.filter_by(userId=user.id).first()
+    
+        if request.method == 'GET':
         
-        total = 0
-        cartItems = carts.query.filter_by(personId=user.id).all()
-        
-        if cartItems:
-            for item in cartItems:
-                meal = meals.query.filter_by(id=item.mealId).first()
+            #get meals from db
+            foundMeals = meals.query.all()
+            
+            #get meal photos ,chef
+            for foundMeal in foundMeals:
+                #person
+                foundMealChefId = chefs.query.filter_by(id=foundMeal.chefId).first().id
+                foundMealPerson = persons.query.filter_by(id=foundMealChefId).first()   
+                foundMeal.addPerson(foundMealPerson.id, foundMealPerson.name)
+                
                 #photos
-                foundMealPhotos = meal_photos.query.filter_by(mealId=meal.id)
+                foundMealPhotos = meal_photos.query.filter_by(mealId=foundMeal.id).all()
                 foundPhotos = list()
                 for foundMealPhoto in foundMealPhotos:
                     foundPhotos.append(foundMealPhoto.photo)
-                meal.addPhotos(foundPhotos)
-                        
-                mealTotal = float(meal.price) * float(item.amount)
-                total += mealTotal
-                meal.addTotal(mealTotal)
-        session["total"] = total
-    
-    if request.method == 'GET':
-    
-        #get meals from db
-        foundMeals = meals.query.all()
-        
-        #get meal photos ,chef
-        for foundMeal in foundMeals:
-            #person
-            foundMealChefId = chefs.query.filter_by(id=foundMeal.chefId).first().id
-            foundMealPerson = persons.query.filter_by(id=foundMealChefId).first()   
-            foundMeal.addPerson(foundMealPerson.id, foundMealPerson.name)
-            
-            #photos
-            foundMealPhotos = meal_photos.query.filter_by(mealId=foundMeal.id).all()
-            foundPhotos = list()
-            for foundMealPhoto in foundMealPhotos:
-                foundPhotos.append(foundMealPhoto.photo)
-            foundMeal.addPhotos(foundPhotos)
-            
-            #reviews
-            foundMealReviews = reviews.query.filter_by(mealId=foundMeal.id).all()
-            if foundMealReviews:
-                foundMeal.addReviewCount(len(foundMealReviews))
-                avgReviews = 0
-                for foundMealReview in foundMealReviews:
-                    avgReviews += foundMealReview.review
-                avgReviews /= len(foundMealReviews)
-                foundMeal.addReviewAvg(int(avgReviews))
-            
-        
-        #get persons these are chefs 
-        foundChefs = chefs.query.all()
-        foundPersons = []
-        for foundChef in foundChefs:
-            chefPerson = persons.query.filter_by(id=foundChef.personId).first()
-            foundPersons.append(chefPerson)
-
-            topReview = -1
-            topMeal = meals
-            chefReviews = reviews.query.filter_by(personId=chefPerson.id).all()
-            for chefReview in chefReviews:
-                if chefReview.review > topReview:
-                    topReview = chefReview.review
-                    topMeal = meals.query.filter_by(id=chefReview.mealId).first()
-                    
-            foundChef.addTopMeal(topMeal)
+                foundMeal.addPhotos(foundPhotos)
                 
-        #reviews
-        if foundChefs:
-            foundChefReviews = reviews.query.filter_by(personId = foundChef.personId).all()
-            if foundChefReviews:
-                for foundPerson in foundPersons:
-                    foundPerson.addReviewCount(len(foundChefReviews))                
+                #reviews
+                foundMealReviews = reviews.query.filter_by(mealId=foundMeal.id).all()
+                if foundMealReviews:
+                    foundMeal.addReviewCount(len(foundMealReviews))
                     avgReviews = 0
-                    topMeal = None
-                    for foundChefReview in foundChefReviews:
-                        avgReviews += foundChefReview.review
-                        
-                        if foundChefReviews.index(foundChefReview) == 0:
-                            topMeal = foundChefReview.mealId
-                        elif foundChefReview.review > foundChefReviews[foundChefReviews.index(foundChefReview) - 1].review:
-                            topMeal = foundChefReview.mealId
-                    foundPerson.addTopMeal(meals.query.filter_by(id=topMeal).first())       
-                    avgReviews /= len(foundChefReviews)
-                    foundPerson.addReviewAvg(int(avgReviews))        
-        
-        #notifications
-        notis = notifications.query.filter_by(personId=user.id).all()
-        notisLength = len(notis)
+                    for foundMealReview in foundMealReviews:
+                        avgReviews += foundMealReview.review
+                    avgReviews /= len(foundMealReviews)
+                    foundMeal.addReviewAvg(int(avgReviews))
+                
             
-        
-        if not session['isLoggedIn']:
-            person = {'id':'home', 'name':'Name'}
-            total = 0
-            
-        return render_template("home.html", person=person, total=total, isLoggedIn=session['isLoggedIn'], persons=foundPersons, meals=foundMeals, notificationCount=notisLength, notifications=notis)
-    
-    else:
-        #get values from the form.
-        profileId = request.form['profileId']
-        mealId = request.form['mealId']
-        type = request.form['homeCardType']
-        amount = 1
+            #get persons these are chefs 
+            foundChefs = chefs.query.all()
+            foundPersons = []
+            for foundChef in foundChefs:
+                chefPerson = persons.query.filter_by(id=foundChef.personId).first()
+                foundPersons.append(chefPerson)
 
-        try:
-            amount = request.form['mealMealAmount']
-        except:
-            pass
+                topReview = -1
+                topMeal = meals
+                chefReviews = reviews.query.filter_by(personId=chefPerson.id).all()
+                for chefReview in chefReviews:
+                    if chefReview.review > topReview:
+                        topReview = chefReview.review
+                        topMeal = meals.query.filter_by(id=chefReview.mealId).first()
+                        
+                foundChef.addTopMeal(topMeal)
+                    
+            #reviews
+            if foundChefs:
+                foundChefReviews = reviews.query.filter_by(personId = foundChef.personId).all()
+                if foundChefReviews:
+                    for foundPerson in foundPersons:
+                        foundPerson.addReviewCount(len(foundChefReviews))                
+                        avgReviews = 0
+                        topMeal = None
+                        for foundChefReview in foundChefReviews:
+                            avgReviews += foundChefReview.review
+                            
+                            if foundChefReviews.index(foundChefReview) == 0:
+                                topMeal = foundChefReview.mealId
+                            elif foundChefReview.review > foundChefReviews[foundChefReviews.index(foundChefReview) - 1].review:
+                                topMeal = foundChefReview.mealId
+                        foundPerson.addTopMeal(meals.query.filter_by(id=topMeal).first())       
+                        avgReviews /= len(foundChefReviews)
+                        foundPerson.addReviewAvg(int(avgReviews))        
+            
+            #notifications
+            notis = notifications.query.filter_by(personId=user.id).all()
+            notisLength = 0
+            if notis:
+                notisLength = len(notis)
+            
+            total = 0
+            cartItems = carts.query.filter_by(personId=user.id).all()    
+            if cartItems:
+                for item in cartItems:
+                    meal = meals.query.filter_by(id=item.mealId).first()
+                    #photos
+                    foundMealPhotos = meal_photos.query.filter_by(mealId=meal.id)
+                    foundPhotos = list()
+                    for foundMealPhoto in foundMealPhotos:
+                        foundPhotos.append(foundMealPhoto.photo)
+                    meal.addPhotos(foundPhotos)
+                            
+                    mealTotal = float(meal.price) * float(item.amount)
+                    total += mealTotal
+                    meal.addTotal(mealTotal)
+            session["total"] = total
+            return render_template("home.html", person=person, total=total, notificationCount=notisLength, notifications=notis, isLoggedIn=session['isLoggedIn'], persons=foundPersons, meals=foundMeals)
         
-        try:
-            topMeal = request.form['chefTopMeal']
-        except:
-            pass
-        
-        
-        if type == 'Chef':
-            homeSubmitChef = request.form['homeSubmittedChef']
-            print(homeSubmitChef)
-            if homeSubmitChef == "homeChefMeal":
-                meal = meals.query.filter_by(id=topMeal).first()
-                return redirect(url_for("meal", mealId=meal.id))
-            elif homeSubmitChef == "homeChefChef":
-                profile = persons.query.filter_by(id=profileId).first()
-                return redirect(url_for("profile", profileId=profile.id))
-        elif type == 'Meal':
-            homeSubmitMeal = request.form['homeSubmittedMeal']
-            if homeSubmitMeal == "homeMealMeal":
-                meal = meals.query.filter_by(id=mealId).first()
-                return redirect(url_for("meal", mealId=meal.id))
-            elif homeSubmitMeal == "homeMealChef":
-                profile = persons.query.filter_by(id=profileId).first()
-                return redirect(url_for("profile", profileId=profile.id))
-            elif homeSubmitMeal == "homeMealOrder":
-                cart = carts.query.filter_by(mealId=mealId, personId=person.id).first()
-                if cart:
-                    cart.amount += amount
-                    db.session.commit()
-                else:
-                    cart = carts(mealId, person.id, amount)
-                    db.session.add(cart)
-                    db.session.commit()
-                return redirect(url_for("home"))
-        return redirect(url_for("home"))
+        else:
+            #get values from the form.
+            profileId = request.form['profileId']
+            mealId = request.form['mealId']
+            type = request.form['homeCardType']
+            amount = 1
+
+            try:
+                amount = request.form['mealMealAmount']
+            except:
+                pass
+            
+            try:
+                topMeal = request.form['chefTopMeal']
+            except:
+                pass
+            
+            
+            if type == 'Chef':
+                homeSubmitChef = request.form['homeSubmittedChef']
+                print(homeSubmitChef)
+                if homeSubmitChef == "homeChefMeal":
+                    meal = meals.query.filter_by(id=topMeal).first()
+                    return redirect(url_for("meal", mealId=meal.id))
+                elif homeSubmitChef == "homeChefChef":
+                    profile = persons.query.filter_by(id=profileId).first()
+                    return redirect(url_for("profile", profileId=profile.id))
+            elif type == 'Meal':
+                homeSubmitMeal = request.form['homeSubmittedMeal']
+                if homeSubmitMeal == "homeMealMeal":
+                    meal = meals.query.filter_by(id=mealId).first()
+                    return redirect(url_for("meal", mealId=meal.id))
+                elif homeSubmitMeal == "homeMealChef":
+                    profile = persons.query.filter_by(id=profileId).first()
+                    return redirect(url_for("profile", profileId=profile.id))
+                elif homeSubmitMeal == "homeMealOrder":
+                    cart = carts.query.filter_by(mealId=mealId, personId=person.id).first()
+                    if cart:
+                        cart.amount += amount
+                        db.session.commit()
+                    else:
+                        cart = carts(mealId, person.id, amount)
+                        db.session.add(cart)
+                        db.session.commit()
+                    return redirect(url_for("home"))
+            return redirect(url_for("home"))
+    else:
+        person = {'id':'home', 'name':'Name'}
+        total = 0
+                
+        return render_template("home.html", person=person, total=total, notificationCount=notisLength, notifications=notis, isLoggedIn=session['isLoggedIn'], persons=None, meals=None)
 
 @app.route("/register", methods=['POST', 'GET'])
 def register():
@@ -521,7 +520,14 @@ def about():
         session["isLoggedIn"] = True
         user = users.query.filter_by(email=user).first()
         person = persons.query.filter_by(userId=user.id).first()
-        return render_template("about.html", person=person, total=total, isLoggedIn=session["isLoggedIn"])
+        
+        #notifications
+        notis = notifications.query.filter_by(personId=user.id).all()
+        notisLength = 0
+        if notis:
+            notisLength = len(notis)
+        
+        return render_template("about.html", person=person, total=total, notifications=notis, notificationCount=notisLength, isLoggedIn=session["isLoggedIn"])
     return render_template("about.html", person=None, total=0, isLoggedIn=session["isLoggedIn"])
 
 
@@ -534,7 +540,10 @@ def cart(personId):
         session["isLoggedIn"] = True
         user = users.query.filter_by(email=user).first()
         person = persons.query.filter_by(userId=user.id).first()
-        
+        notis = notifications.query.filter_by(personId=user.id).all()
+        notisLength = 0
+        if notis:
+            notisLength = len(notis)
         total = 0
         
         if request.method == 'GET':
@@ -590,7 +599,7 @@ def cart(personId):
             
             return redirect(url_for("cart", person.id))
 
-        return render_template("cart.html", person=person, total=total, isLoggedIn=session["isLoggedIn"], cards=cartItems)
+        return render_template("cart.html", person=person, total=total, notifications=notis, notificationCount=notisLength, isLoggedIn=session["isLoggedIn"], cards=cartItems)
     else:
         return redirect(url_for("login"))
             
@@ -607,6 +616,10 @@ def profile(profileId):
         person =  persons.query.filter_by(userId=user.id).first() 
         profile = persons.query.filter_by(userId=profileId).first()
         chef = chefs.query.filter_by(personId=profileId).first()
+        notis = notifications.query.filter_by(personId=user.id).all()
+        notisLength = 0
+        if notis:
+            notisLength = len(notis)
         profile.addIsMine(False)
         if int(user.id) == int(profile.id):
             profile.addIsMine(True)
@@ -651,9 +664,9 @@ def profile(profileId):
                     foundReview.addPerson(person.name)
                     foundReview.addMeal(foundReviewMeal)
                 
-                return render_template("profile.html", person=person, total=total, isLoggedIn=session['isLoggedIn'], profile=profile, meals=meal, reviews=review)    
+                return render_template("profile.html", person=person, total=total, notifications=notis, notificationCount=notisLength, isLoggedIn=session['isLoggedIn'], profile=profile, meals=meal, reviews=review)    
             else:
-                return render_template("profile.html", person=person, total=total, isLoggedIn=session['isLoggedIn'], profile=profile)
+                return render_template("profile.html", person=person, total=total, notifications=notis, notificationCount=notisLength, isLoggedIn=session['isLoggedIn'], profile=profile)
         else:
             mealId = request.form['reviewMealId']
             personId = request.form['reviewPersonId']
@@ -684,6 +697,10 @@ def editProfile(profileId):
             user = users.query.filter_by(email=user).first()
             person = persons.query.filter_by(id=user.id).first()
             profile = persons.query.filter_by(userId=profileId).first()
+            notis = notifications.query.filter_by(personId=user.id).all()
+            notisLength = 0
+            if notis:
+                notisLength = len(notis)
             
             #check if my profile
             if int(user.id) != int(profile.id):
@@ -692,7 +709,7 @@ def editProfile(profileId):
         else:
             return redirect(url_for("login"))
         
-        return render_template("editProfile.html", person=person, profile=profile, total=total, isLoggedIn=session["isLoggedIn"])
+        return render_template("editProfile.html", person=person, profile=profile, total=total, notifications=notis, notificationCount=notisLength, isLoggedIn=session["isLoggedIn"])
     else:
         #grab inputs from form
         editProfilePhoto = request.files['editProfilePhoto']
@@ -734,6 +751,10 @@ def meal(mealId):
         user = session["user"]
         session['isLoggedIn'] = True
         total = session["total"]
+        notis = notifications.query.filter_by(personId=user.id).all()
+        notisLength = 0
+        if notis:
+            notisLength = len(notis)
         
         #get user id
         user = users.query.filter_by(email=user).first()
@@ -766,7 +787,7 @@ def meal(mealId):
         avgReviews /= len(foundMealReviews)
         foundMeal.addReviewAvg(int(avgReviews))
         
-        return render_template("meal.html", person=person, total=total, isLoggedIn=["isLoggedIn"], meal=foundMeal)
+        return render_template("meal.html", person=person, total=total, notifications=notis, notificationCount=notisLength, isLoggedIn=["isLoggedIn"], meal=foundMeal)
     else:
         return redirect(url_for('login'))
         
@@ -782,6 +803,10 @@ def addMeal(userId):
             user = session["user"]
             session['isLoggedIn'] = True
             total = session["total"]
+            notis = notifications.query.filter_by(personId=user.id).all()
+            notisLength = 0
+            if notis:
+                notisLength = len(notis)
             
             #get user id
             user = users.query.filter_by(email=user).first()
@@ -792,7 +817,7 @@ def addMeal(userId):
             if int(user.id) != int(person.id):
                 return redirect(url_for("profile", profileId=user.id))
             
-            return render_template("addMeal.html", person=person, total=total, isLoggedIn=session["isLoggedIn"])
+            return render_template("addMeal.html", person=person, total=total, notifications=notis, notificationCount=notisLength, isLoggedIn=session["isLoggedIn"])
         else:
             return redirect(url_for("login"))
     else:
