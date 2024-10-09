@@ -65,7 +65,7 @@
     <div id="menu-carousel" class="carousel" data-ride="carousel" data-interval="false">
         <div class="carousel-inner">
             <!--DYNAMIC CHEFS-->
-            {% if p %}
+            {% if persons %}
             {% for p in persons %}
             <div class="carousel-item menu-item chef-item">
                 <div class="card shadow-lg">
@@ -87,11 +87,13 @@
                             <input type="hidden" name="homeCardType" value="Chef">
                             <input type="hidden" name="homeSubmittedChef">
                             <input type="hidden" value="{{ p.id }}" name="profileId">
-                            <input type="hidden" name="chefTopMeal" value="chef.topMeal.id">
+                            <input type="hidden" name="chefTopMeal" value="p.topMeal.id">
                             <div class="d-flex">
+                                {% if p.topMeal.id %}
                                 <i class="fa-solid fa-arrow-right me-1"></i>
                                 <input id="homeChefMeal" type="submit" class="btn nav-link text-start"
                                     name="homeSubmitChef" value="Top meal">
+                                {% endif %}
                             </div>
                             <input type="hidden" value="{{ p.id }}" name="mealId">
                             <input id="homeChefChef" type="submit" class="btn btn-outline-primary" name="homeSubmitChef"

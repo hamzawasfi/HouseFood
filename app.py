@@ -338,7 +338,7 @@ def home():
             amount = 1
 
             try:
-                amount = request.form['mealMealAmount']
+                amount = int(request.form['mealMealAmount'])
             except:
                 pass
             
@@ -379,6 +379,8 @@ def home():
     else:
         person = {'id':'home', 'name':'Name'}
         total = 0
+        notisLength = 0
+        notis = None
                 
         return render_template("home.html", person=person, total=total, notificationCount=notisLength, notifications=notis, isLoggedIn=session['isLoggedIn'], persons=None, meals=None)
 
@@ -531,7 +533,7 @@ def about():
     return render_template("about.html", person=None, total=0, isLoggedIn=session["isLoggedIn"])
 
 
-@app.route("/cart/<personId>")
+@app.route("/cart/<personId>", methods=['POST', 'GET'])
 def cart(personId):
     #check if logged in
     session["isLoggedIn"] = False
@@ -571,33 +573,42 @@ def cart(personId):
                 for item in cartItems:
                     meal = meals.query.filter_by(id=item.mealId).first()
                     seller = chefs.query.filter_by(id=meal.chefId).first()
+                    sellerPerson = persons.query.filter_by(id=seller.personId).first()
+                    sellerUser = users.query.filter_by(id=sellerPerson.userId).first()
                     
                     mealTotal = int(meal.price) * int(item.amount)
                     
-                    sellerEmail = seller.email
+                    sellerEmail = sellerUser.email
                     message = Message(f"Succesfull Sell at HouseFood", sender='noreply@housefood.com', recipients=[sellerEmail])
-                    message.body = "You have earned ${mealTotal} from selling {meal.name} from {person.name}, {item.amount} times, congratulations!"
+                    message.body = f"You have earned ${mealTotal} from selling {meal.name} from {person.name}, {item.amount} times, congratulations!"
                     mail.send(message)
                     
                     #add earned to seller
-                    seller.earned += mealTotal
+                    sellerPerson.earned += mealTotal
                     
                     #send notification to seller
-                    notification = notifications(seller.id, "purchase")
+                    notification = notifications(sellerPerson.id, "purchase")
                     db.session.add(notification)
                     db.session.commit()
                     
                     purchase = purchases(notification.id, user.id, meal.id, mealTotal)
                     db.session.add(purchase)
                     db.session.commit()
+                    
+                    db.session.delete(item)
+                    db.session.commit()
+                    
+                    flash("Paid succesfully!", "info")
+                    
+                    
                                 
-            #send email to buyer
-            buyerEmail = user.email
-            message = Message(f"Succesfull purchase at HouseFood", sender='noreply@housefood.com', recipients=[buyerEmail])
-            message.body = "You have paid ${total} at HouseFood, Thanks!"
-            mail.send(message)
+                #send email to buyer
+                buyerEmail = user.email
+                message = Message(f"Succesfull purchase at HouseFood", sender='noreply@housefood.com', recipients=[buyerEmail])
+                message.body = f"You have paid ${total} at HouseFood, Thanks!"
+                mail.send(message)
             
-            return redirect(url_for("cart", person.id))
+            return redirect(url_for("cart", personId=person.id))
 
         return render_template("cart.html", person=person, total=total, notifications=notis, notificationCount=notisLength, isLoggedIn=session["isLoggedIn"], cards=cartItems)
     else:
@@ -751,14 +762,16 @@ def meal(mealId):
         user = session["user"]
         session['isLoggedIn'] = True
         total = session["total"]
+        
+        #get user id
+        user = users.query.filter_by(email=user).first()
+        person = persons.query.filter_by(id=user.id).first()
         notis = notifications.query.filter_by(personId=user.id).all()
         notisLength = 0
         if notis:
             notisLength = len(notis)
         
-        #get user id
-        user = users.query.filter_by(email=user).first()
-        person = persons.query.filter_by(id=user.id).first()
+        
         
         #get the found meal        
         foundMeal = meals.query.filter_by(id=mealId).first()
@@ -780,12 +793,16 @@ def meal(mealId):
         
         #get reviews
         foundMealReviews = reviews.query.filter_by(mealId=foundMeal.id).all()
-        foundMeal.addReviewCount(len(foundMealReviews))
-        avgReviews = 0
-        for foundMealReview in foundMealReviews:
-            avgReviews += foundMealReview.review
-        avgReviews /= len(foundMealReviews)
-        foundMeal.addReviewAvg(int(avgReviews))
+        if foundMealReviews:
+            foundMeal.addReviewCount(len(foundMealReviews))
+            avgReviews = 0
+            for foundMealReview in foundMealReviews:
+                avgReviews += foundMealReview.review
+            avgReviews /= len(foundMealReviews)
+            foundMeal.addReviewAvg(int(avgReviews))
+        else:
+            foundMeal.addReviewCount(0)
+            foundMeal.addReviewAvg(0)
         
         return render_template("meal.html", person=person, total=total, notifications=notis, notificationCount=notisLength, isLoggedIn=["isLoggedIn"], meal=foundMeal)
     else:
@@ -803,14 +820,14 @@ def addMeal(userId):
             user = session["user"]
             session['isLoggedIn'] = True
             total = session["total"]
-            notis = notifications.query.filter_by(personId=user.id).all()
-            notisLength = 0
-            if notis:
-                notisLength = len(notis)
             
             #get user id
             user = users.query.filter_by(email=user).first()
             person = persons.query.filter_by(id=userId).first()
+            notis = notifications.query.filter_by(personId=user.id).all()
+            notisLength = 0
+            if notis:
+                notisLength = len(notis)
             
                     
             #if not adding meal to his own

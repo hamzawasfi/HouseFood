@@ -9,19 +9,19 @@
     {% for card in cards%}
     <div class="cart-item d-flex align-items-center justify-content-between shadow-lg my-3">
         <div>
-        {%if card.meal.photos.0 %}
-        {% for photo in card.meal.photos %}
-        <div {% if photo==card.meal.photos.0 %} class="carousel-item active" {% else %} class="carousel-item" {% endif
-            %}>
-            <img class="d-block cart-img-top" src="../static/photos/{{ photo }}" alt="slide">
+            {%if card.meal.photos.0 %}
+            {% for photo in card.meal.photos %}
+            <div {% if photo==card.meal.photos.0 %} class="carousel-item active" {% else %} class="carousel-item" {%
+                endif %}>
+                <img class="d-block cart-img-top" src="../static/photos/{{ photo }}" alt="slide">
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="carousel-item active">
+                <img class="d-block cart-img-top" src="../static/photos/placeholder.jpg" alt="slide">
+            </div>
+            {% endif %}
         </div>
-        {% endfor %}
-        {% else %}
-        <div class="carousel-item active">
-            <img class="d-block cart-img-top" src="../static/photos/placeholder.jpg" alt="slide">
-        </div>
-        {% endif %}
-    </div>
         <div class="card-body justify-content-between py-2 d-flex flex-column mx-3">
             <h5>{{ card.meal.name }}</h5>
             <p class="card-text">{{ card.meal.intro }}</p>
@@ -50,10 +50,17 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text">Total: $</span>
                 </div>
-                <input type="text" disabled placeholder="{{ total }}" class="form-control total"
-                    name="cartPurchase" aria-label="Amount (to the nearest dollar)">
+                <input type="text" readonly value="{{ total }}" class="form-control total" name="cartPurchase"
+                    aria-label="Amount (to the nearest dollar)">
             </div>
             <button type="submit" class="btn btn-primary">Purchase Now!</button>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <p class="mt-2 text-danger">{{ message }}</p>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
         </form>
     </div>
 </section>
