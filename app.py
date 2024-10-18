@@ -121,12 +121,15 @@ class chefs(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     personId = db.Column(db.Integer, db.ForeignKey(persons.id), nullable=False)
     topMeal = object
+    reviewCount = 0
+    reviewAvg = 0
     
     def __init__(self, personId):
         self.personId = personId
         
     def addTopMeal(self, topMeal):
         self.topMeal = topMeal
+    
     
 
 class meals(db.Model):
@@ -280,16 +283,23 @@ def home():
                 topReview = -1
                 topMeal = meals
                 chefReviews = reviews.query.filter_by(personId=chefPerson.id).all()
-                for chefReview in chefReviews:
-                    if chefReview.review > topReview:
-                        topReview = chefReview.review
-                        topMeal = meals.query.filter_by(id=chefReview.mealId).first()
-                        
-                foundChef.addTopMeal(topMeal)
+                totalReviews = 0
+                chefPerson.addReviewCount(len(chefReviews))
+                if chefReviews:
+                    for chefReview in chefReviews:
+                        totalReviews += int(chefReview.review)
+                        if chefReview.review > topReview:
+                            topReview = chefReview.review
+                            topMeal = meals.query.filter_by(id=chefReview.mealId).first()
+                    try:
+                        chefPerson.addReviewAvg(int(int(totalReviews) / len(chefReviews)))   
+                    except ZeroDivisionError:
+                        chefPerson.addReviewAvg(0)
+                    chefPerson.addTopMeal(topMeal)
                     
             #reviews
             if foundChefs:
-                foundChefReviews = reviews.query.filter_by(personId = foundChef.personId).all()
+                foundChefReviews = reviews.query.filter_by(personId=foundChef.personId).all()
                 if foundChefReviews:
                     for foundPerson in foundPersons:
                         foundPerson.addReviewCount(len(foundChefReviews))                
@@ -343,7 +353,7 @@ def home():
                 pass
             
             try:
-                topMeal = request.form['chefTopMeal']
+                topMeal = int(request.form['chefTopMeal'])
             except:
                 pass
             
@@ -352,6 +362,7 @@ def home():
                 homeSubmitChef = request.form['homeSubmittedChef']
                 print(homeSubmitChef)
                 if homeSubmitChef == "homeChefMeal":
+                    print(topMeal)
                     meal = meals.query.filter_by(id=topMeal).first()
                     return redirect(url_for("meal", mealId=meal.id))
                 elif homeSubmitChef == "homeChefChef":

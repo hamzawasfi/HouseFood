@@ -87,7 +87,7 @@
                             <input type="hidden" name="homeCardType" value="Chef">
                             <input type="hidden" name="homeSubmittedChef">
                             <input type="hidden" value="{{ p.id }}" name="profileId">
-                            <input type="hidden" name="chefTopMeal" value="p.topMeal.id">
+                            <input type="hidden" name="chefTopMeal" value="{{ p.topMeal.id }}">
                             <div class="d-flex">
                                 {% if p.topMeal.id %}
                                 <i class="fa-solid fa-arrow-right me-1"></i>
