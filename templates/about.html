@@ -26,30 +26,30 @@
     <div class="heading text-center mb-5">
         <h1>Contact Us</h1>
     </div>
-    <form class="container cnt-container d-flex w-100">
+    <form action="/about" method="POST" class="container cnt-container d-flex w-100">
         <div class="row w-100 ">
             <div class="col-6  info-col">
                 <div class="form-group my-4 text-center">
                     <label for="cnt-name" class="my-1">Full Name</label>
-                    <input type="text" class="text-center form-control" id="cnt-name" placeholder="Full Name">
+                    <input type="text" name="fullName" class="text-center form-control" id="cnt-name" placeholder="Full Name">
                 </div>
                 <div class="form-group mb-4 text-center">
                     <label for="cnt-email" class="my-1">Email address</label>
                     <input type="cnt-email" pattern="[^ @]*@[^ @]*" required class="text-center form-control" id="email"
-                        aria-describedby="emailHelp" placeholder="Enter email">
+                        aria-describedby="emailHelp" name="sendEmail" placeholder="Enter email">
                 </div>
             </div>
             <div class="col-6 message-col py-2">
                 <div class="form-group text-center">
                     <h5 mt-1>Type your message here.</h5>
-                    <textarea name="message" class="form-control mt-4" rows="5" id="message" required></textarea>
+                    <textarea name="text" class="form-control mt-4" rows="5" id="message" required></textarea>
                 </div>
             </div>
         </div>
         <div class="row w-100 d-block text-center">
             <div class="col submit-col">
                 <p class="cnt-error d-none"></p>
-                <button type="submit" class="btn btn-outline-primary">Send</button>
+                <input type="submit" class="btn btn-outline-primary" value="Send">
             </div>
         </div>
     </form>

@@ -522,7 +522,7 @@ def subscribe():
     return redirect(url_for("home"))
 
 
-@app.route("/about")
+@app.route("/about", methods=['POST', 'GET'])
 def about():
     session["isLoggedIn"] = False
     total = 0
@@ -534,13 +534,27 @@ def about():
         user = users.query.filter_by(email=user).first()
         person = persons.query.filter_by(userId=user.id).first()
         
-        #notifications
-        notis = notifications.query.filter_by(personId=user.id).all()
-        notisLength = 0
-        if notis:
-            notisLength = len(notis)
+        if request.method == 'GET':
+            #notifications
+            notis = notifications.query.filter_by(personId=user.id).all()
+            notisLength = 0
+            if notis:
+                notisLength = len(notis)
+            
+            return render_template("about.html", person=person, total=total, notifications=notis, notificationCount=notisLength, isLoggedIn=session["isLoggedIn"])
+    if request.method == 'POST':
+        name = request.form['fullName']
+        text = request.form['text']
+        sendEmail = request.form['sendEmail']
+            
+        #save it to DB
         
-        return render_template("about.html", person=person, total=total, notifications=notis, notificationCount=notisLength, isLoggedIn=session["isLoggedIn"])
+            
+        message = Message(f"{name}: {sendEmail}", sender=sendEmail, recipients=["hwasfibusiness@outlook.com"])
+        message.body = text
+        mail.send(message)
+        print("sucess")
+        return redirect(url_for("about"))
     return render_template("about.html", person=None, total=0, isLoggedIn=session["isLoggedIn"])
 
 
