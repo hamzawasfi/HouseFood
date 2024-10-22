@@ -69,23 +69,22 @@
                                 aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
-                                        <form>
+                                        <form action="/" method="POST">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLongTitle">Write Your Message
-                                                </h5>
+                                                <h5 class="modal-title" id="exampleModalLongTitle">Write Your Message</h5>
                                             </div>
                                             <div class="modal-body">
                                                 <!--text-->
                                                 <div class="form-group col-md-6 mt-3">
                                                     <label for="inputEmail4">Your Message...</label>
-                                                    <textarea rows="3" type="text" name="requestText"
-                                                        class="form-control" placeholder="Your Message..."></textarea>
+                                                    <textarea rows="3" type="text" name="requestText" class="form-control"
+                                                        placeholder="Your Message..."></textarea>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"
                                                     data-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary">Send</button>
+                                                <input type="sumbit" class="btn btn-primary" value="send">
                                             </div>
                                         </form>
                                     </div>

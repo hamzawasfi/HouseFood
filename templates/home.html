@@ -79,7 +79,7 @@
                         <p class="card-text">{{ p.intro }}</p>
                         <div class="ratings">
                             {% for i in range(p.reviewAvg) %}
-                                <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
                             {% endfor %}
                             <p> {{ p.reviewCount }} reviews</p>
                         </div>
@@ -98,21 +98,19 @@
                             <input type="hidden" value="{{ p.id }}" name="mealId">
                             <input id="homeChefChef" type="submit" class="btn btn-outline-primary" name="homeSubmitChef"
                                 value="More Details">
-                        </form>
 
-                        {% if p.id != person.id %}
-                        <button type="button" class="btn btn-primary" data-toggle="modal"
-                            data-target="#exampleModalCenter">
-                            Send Reqeust
-                        </button>
-                        {% endif %}
+                            {% if p.id != person.id %}
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                data-target="#exampleModalCenter">
+                                Send Reqeust
+                            </button>
+                            {% endif %}
 
-                        <!-- Modal -->
-                        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
-                            aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                <div class="modal-content">
-                                    <form>
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="exampleModalLongTitle">Write Your Message</h5>
                                         </div>
@@ -127,13 +125,12 @@
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
                                                 data-dismiss="modal">Close</button>
-                                            <button type="button" class="btn btn-primary">Send</button>
+                                            <input id="homeChefRequest" type="submit" name="homeSubmitChef" class="btn btn-primary" value="send">
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-
+                        </form>
                     </div>
                 </div>
             </div>

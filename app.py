@@ -44,6 +44,18 @@ class users(db.Model):
         self.email = email
         self.password = password
 
+
+class contacts(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    sendEmail = db.Column(db.String(100), nullable=False)
+    text = db.Column(db.String, nullable=False)
+    fullName = db.Column(db.String, nullable=False)
+    
+    def __init__(self, sendEmail, text, fullName):
+        self.sendEmail = sendEmail
+        self.text = text
+        self.fullName = fullName
+
         
 class persons(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -242,7 +254,7 @@ def home():
         session['isLoggedIn'] = True
         user = users.query.filter_by(email=user).first()
         person = persons.query.filter_by(userId=user.id).first()
-    
+
         if request.method == 'GET':
         
             #get meals from db
@@ -357,6 +369,11 @@ def home():
             except:
                 pass
             
+            try:
+                requestText = request.form['requestText']
+            except:
+                pass
+            
             
             if type == 'Chef':
                 homeSubmitChef = request.form['homeSubmittedChef']
@@ -368,6 +385,24 @@ def home():
                 elif homeSubmitChef == "homeChefChef":
                     profile = persons.query.filter_by(id=profileId).first()
                     return redirect(url_for("profile", profileId=profile.id))
+                elif homeSubmitChef == "homeChefRequest":
+                    sellerPerson = persons.query.filter_by(id=profileId).first()
+                    sellerUser = users.query.filter_by(id=profileId).first()
+                    message = Message(f"New Request at HouseFood", sender='noreply@housefood.com', recipients=[sellerUser.email])
+                    message.body = f"You have a new Request from {person.name}:\n{requestText}"
+                    mail.send(message)
+                   
+                    #send notification to seller
+                    notification = notifications(sellerPerson.id, "request")
+                    db.session.add(notification)
+                    db.session.commit()
+                    
+                    req = requests(notification.id, user.id, requestText)
+                    db.session.add(req)
+                    db.session.commit()
+                    
+                    flash("Sent succesfully!", "info")
+                    return redirect(url_for("home"))
             elif type == 'Meal':
                 homeSubmitMeal = request.form['homeSubmittedMeal']
                 if homeSubmitMeal == "homeMealMeal":
@@ -461,7 +496,7 @@ def login():
         #check if user typed email and password
         if not loginEmail:
             flash("Email Is Required", "info")
-            return redirect(url_for(login))
+            return redirect(url_for("login"))
         if not loginPassword:
             flash("Password Is Required", "info")
             return redirect(url_for("login"))
@@ -548,7 +583,9 @@ def about():
         sendEmail = request.form['sendEmail']
             
         #save it to DB
-        
+        contact = contacts(sendEmail, text, name)
+        db.session.add(contact)
+        db.session.commit()
             
         message = Message(f"{name}: {sendEmail}", sender=sendEmail, recipients=["hwasfibusiness@outlook.com"])
         message.body = text
